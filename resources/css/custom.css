@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+.turbo-progress-bar {
+    background-color: #468B97 !important; /* Tailwind pink-500 */
+    height: 3px !important;
+}
+
+button[aria-expanded="false"] {
+    background-color: white !important;
+    color: #374151 !important; /* Tailwind gray-700 */
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #E0E8E9;
+}
+
+.font-headline {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+/* ROLE */
+.badge-SuperAdmin {
+    color: #ffffff;
+    background-color: #dc2626;
+}
+
+.badge-Pembimbing {
+    color: #ffffff;
+    background-color: #468B97;
+}
+
+.badge-Asisten {
+    color: #ffffff;
+    background-color: #16a34a;
+}
+
+.badge-Praktikan {
+    color: #ffffff;
+    background-color: #f97316;
+}
+
+/* STATUS */
+.badge-Disetujui {
+    color: #ffffff;
+    background-color: #16a34a;
+    border: 2px solid #15803d;
+}
+
+.badge-Diproses {
+    color: #ffffff;
+    background-color: #f59e0b;
+    border: 2px solid #d97706;
+}
+
+.badge-Ditolak {
+    color: #ffffff;
+    background-color: #dc2626;
+    border: 2px solid #b91c1c;
+}
+
+/* CALENDAR */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.hero-section {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.slideshow-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.slideshow-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.slideshow-image.active {
+    opacity: 1;
+}
+
+.error-container {
+    min-height: calc(100vh - 160px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-content {
+    max-width: 600px;
+    text-align: center;
+}
+
+.error-number {
+    font-size: 8rem;
+    font-weight: 900;
+    line-height: 1;
+    color: #468B97;
+    opacity: 0.2;
+    margin-bottom: 1rem;
+}
+
+.error-animation {
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}

@@ -1,0 +1,47 @@
+{
+    "name": "itats/praktikum-teknik-sipil",
+    "description": "Praktikum Teknik Sipil Berbasis Web adalah sebuah program pembelajaran interaktif yang dirancang untuk memberikan pengalaman praktis dalam bidang teknik sipil melalui platform digital. Program ini memungkinkan mahasiswa untuk mempelajari dan menerapkan konsep-konsep teknik sipil, seperti analisis struktur, desain geoteknik, manajemen proyek, dan hidrologi, menggunakan simulasi berbasis web, perangkat lunak khusus, dan studi kasus virtual.",
+    "autoload": {
+        "psr-4": {
+            "ITATS\\PraktikumTeknikSipil\\": "app/",
+            "ITATS\\PraktikumTeknikSipil\\App\\": "app/App/",
+            "ITATS\\PraktikumTeknikSipil\\Http\\Controllers\\": "app/Http/Controllers/",
+            "ITATS\\PraktikumTeknikSipil\\Middleware\\": "app/Middleware/",
+            "ITATS\\PraktikumTeknikSipil\\Models\\": "app/Models/",
+            "ITATS\\PraktikumTeknikSipil\\Models\\Seeders\\": "app/Models/Seeders/",
+            "Database\\Migrations\\": "database/migrations/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "authors": [
+        {
+            "name": "ITATS",
+            "email": "itats@ac.id"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "vlucas/phpdotenv": "^5.6",
+        "fakerphp/faker": "^1.24",
+        "illuminate/view": "^12.17",
+        "illuminate/events": "^12.17",
+        "illuminate/filesystem": "^12.17",
+        "respect/validation": "^2.4",
+        "monolog/monolog": "^3.9",
+        "defuse/php-encryption": "^2.4"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-master"
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "ITATS\\PraktikumTeknikSipil\\App\\Router::cacheRoutes"
+        ],
+        "post-install-cmd": [
+            "php update-namespace.php"
+        ],
+        "post-update-cmd": [
+            "php update-namespace.php"
+        ]
+    }
+}
