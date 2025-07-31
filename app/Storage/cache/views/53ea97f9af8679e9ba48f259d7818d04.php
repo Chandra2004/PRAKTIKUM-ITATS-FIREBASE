@@ -50,9 +50,9 @@
                     <input name="password" id="password" type="password" placeholder="••••••••"
                         class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#468B97]" />
                 </div>
-                <button type="submit" name="loginUser" id="buttonLogin"
+                <button type="submit" name="loginUser" id="submitLoginUser" data-submit-loader data-loader="#loaderLoginUser"
                     class="flex items-center justify-center w-full bg-[#468B97] text-white rounded-md py-2 hover:bg-[#3a6f7a] transition-colors">
-                    <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderLogin"></i>
+                    <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderLoginUser"></i>
                     Login
                 </button>
             </form>
@@ -71,10 +71,16 @@
     <?php echo $__env->make('dashboard.layouts.script', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            lucide.createIcons();
-            initSubmitLoader('loaderLogin', 'buttonLogin');
-        });
+        function reinitUI() {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+            initSubmitLoaders();
+        }
+
+        document.addEventListener("DOMContentLoaded", reinitUI);
+        document.addEventListener("turbo:load", reinitUI);
+        document.addEventListener("turbo:frame-load", reinitUI);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 </body>

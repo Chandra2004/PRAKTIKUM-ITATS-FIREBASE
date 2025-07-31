@@ -13,6 +13,7 @@ class DashboardController
 
     public function __construct() {
         $this->userRole = $_SESSION['user']['role_name'] ?? null;
+        Helper::validate_user_session();
     }
 
     public function LinkDashboard() {

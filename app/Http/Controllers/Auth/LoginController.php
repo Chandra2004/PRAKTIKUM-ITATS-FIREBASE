@@ -37,8 +37,15 @@ class LoginController {
 
         try {
             $user = $this->LoginModel->LoginUser($identyfier, $password);
-            if (!$user) {
-                return Helper::redirect('/login', 'error', 'Invalid email or password.');
+
+            $errorMessages = [
+                'status_failed' => 'Status akun anda tidak aktif',
+                false => 'Password anda salah',
+            ];
+
+            if (!is_array($user) && isset($errorMessages[$user])) {
+                $msg = $errorMessages[$user];
+                return Helper::redirect('/login', 'error', $msg);
             }
 
             // Simpan session user

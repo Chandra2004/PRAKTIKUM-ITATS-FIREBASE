@@ -21,30 +21,74 @@
     }
 
 
-    function initSubmitLoader(loaderId, buttonId, contentId = null) {
-        const content = document.getElementById(contentId);
-        const loader = document.getElementById(loaderId);
-        const button = document.getElementById(buttonId);
+    // function initSubmitLoader(loaderId, buttonId, contentId = null) {
+    //     const content = document.getElementById(contentId);
+    //     const loader = document.getElementById(loaderId);
+    //     const button = document.getElementById(buttonId);
 
-        button?.addEventListener("click", function () {
-            content?.classList.remove("hidden");
-            loader?.classList.remove("hidden");
-            button.classList.add("cursor-not-allowed", "opacity-70");
+    //     button?.addEventListener("click", function () {
+    //         content?.classList.remove("hidden");
+    //         loader?.classList.remove("hidden");
+    //         button.classList.add("cursor-not-allowed", "opacity-70");
+    //     });
+
+    //     hideSubmitLoader(loaderId, buttonId, contentId);
+    // }
+
+    // function hideSubmitLoader(loaderId, buttonId, contentId = null) {
+    //     const content = document.getElementById(contentId);
+    //     const loader = document.getElementById(loaderId);
+    //     const button = document.getElementById(buttonId);
+
+    //     content?.classList.add("hidden");
+    //     loader?.classList.add("hidden");
+    //     button?.classList.remove("cursor-not-allowed", "opacity-70");
+    //     // console.log(`Status loading (${buttonId}): sudah`);
+    // }
+
+    // 🔁 Init Submit Loader
+    // function initSubmitLoaders() {
+    //     document.querySelectorAll("form[data-submit-loader]").forEach(form => {
+    //         form.addEventListener("submit", () => {
+    //             const loaderSelector = form.getAttribute("data-loader");
+    //             const buttonSelector = form.getAttribute("data-submit-button");
+    //             const loader = document.querySelector(loaderSelector);
+    //             const button = document.querySelector(buttonSelector);
+
+    //             loader?.classList.remove("hidden");
+    //             button?.classList.add("cursor-not-allowed", "opacity-70");
+    //             button.disabled = true;
+    //         });
+    //     });
+    // }
+
+    function initSubmitLoaders() {
+        document.querySelectorAll("[data-submit-loader]").forEach(button => {
+            const loaderSelector = button.getAttribute("data-loader");
+            const contentSelector = button.getAttribute("data-content");
+
+            const loader = loaderSelector ? document.querySelector(loaderSelector) : null;
+            const content = contentSelector ? document.querySelector(contentSelector) : null;
+
+            button.addEventListener("click", () => {
+                content?.classList.remove("hidden");
+                loader?.classList.remove("hidden");
+                button.classList.add("cursor-not-allowed", "opacity-70");
+            });
+
+            // Optional: simpan fungsi reset ke dalam window untuk nanti dipanggil
+            const buttonId = button.id;
+            window[`hideSubmitLoader_${buttonId}`] = () => {
+                content?.classList.add("hidden");
+                loader?.classList.add("hidden");
+                button.classList.remove("cursor-not-allowed", "opacity-70");
+            };
+
+            window.hideSubmitLoader_submitSearchUser?.();
+
         });
-
-        hideSubmitLoader(loaderId, buttonId, contentId);
     }
 
-    function hideSubmitLoader(loaderId, buttonId, contentId = null) {
-        const content = document.getElementById(contentId);
-        const loader = document.getElementById(loaderId);
-        const button = document.getElementById(buttonId);
-
-        content?.classList.add("hidden");
-        loader?.classList.add("hidden");
-        button?.classList.remove("cursor-not-allowed", "opacity-70");
-        // console.log(`Status loading (${buttonId}): sudah`);
-    }
 
     function initImagePreview(inputId, containerId, submitButtonId, maxSizeMB = 2) {
         const input = document.getElementById(inputId);

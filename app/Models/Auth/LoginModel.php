@@ -22,17 +22,21 @@ class LoginModel extends Database {
             SELECT users.*, roles.role_name AS role_name
             FROM users
             JOIN roles ON users.role_uid = roles.uid
-            WHERE users.email = :email OR users.npm_nip = :npm_nip
+            WHERE (users.email = :email OR users.npm_nip = :npm_nip)
         ");
         $this->db->bind(':email', $identyfier);
         $this->db->bind(':npm_nip', $identyfier);
         $user = $this->db->single();
 
+        if ($user && $user['status'] == '0') {
+            return 'status_failed';
+        }
+
         if ($user && password_verify($password, $user['password'])) {
             return $user;
         }
 
+
         return false;
     }
-
 }

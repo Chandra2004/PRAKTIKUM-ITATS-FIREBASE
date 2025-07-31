@@ -18,7 +18,7 @@ class RegisterValidator implements Middleware
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
         try {
-            if ($path === '/register/auth') {
+            if ($path === '/register/auth' || $path === '/dashboard/superadmin/user-management/create/user') {
                 $npm               = $_POST['npm'] ?? '';
                 $fullName          = $_POST['full-name'] ?? '';
                 $phone             = $_POST['phone'] ?? '';
@@ -68,8 +68,13 @@ class RegisterValidator implements Middleware
 
                 $firstMessage = array_shift($messages);
 
-                Helper::redirect('/register', 'error', 'Validasi gagal: ' . $firstMessage);
-                exit;
+                $status = isset($_SESSION['user']['role_name']);
+
+                if($status && $_SESSION['user']['role_name'] === 'SuperAdmin') {
+                    return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'Validasi gagal: ' . $firstMessage);
+                } else {
+                }
+                return Helper::redirect('/register', 'error', 'Validasi gagal: ' . $firstMessage);
             }
 
             Helper::redirect('/register', 'error', 'Validasi gagal: ' . $e->getMessage());

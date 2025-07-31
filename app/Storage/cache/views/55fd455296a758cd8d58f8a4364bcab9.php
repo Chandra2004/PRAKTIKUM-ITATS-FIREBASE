@@ -123,44 +123,114 @@
     </div>
 
 
+    
+
+
     <!-- Flowbite & Lucide Icons -->
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    
+    <script type="module">
+        import {
+            initModals,
+            initAccordions,
+            initDropdowns,
+            initTabs,
+            initTooltips
+        } from 'https://unpkg.com/flowbite@latest/dist/flowbite.turbo.js';
+
+        window.initModals = initModals;
+        window.initAccordions = initAccordions;
+        window.initDropdowns = initDropdowns;
+        window.initTabs = initTabs;
+        window.initTooltips = initTooltips;
+    </script>
+
     <?php echo $__env->make('dashboard.layouts.script', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+
     <script>
         function reinitUI() {
-            if (window.initFlowbite) initFlowbite();
-            if (window.lucide) lucide.createIcons();
-            initAll(); // panggil init ulang semua fungsi UI termasuk skeleton & preview
-            showFlashNotification(); // panggil notifikasi
+            // Reinit semua komponen Flowbite Turbo
+            if (window.initModals) window.initModals();
+            if (window.initAccordions) window.initAccordions();
+            if (window.initDropdowns) window.initDropdowns();
+            if (window.initTabs) window.initTabs();
+            if (window.initTooltips) window.initTooltips();
+
+            // Lucide icons
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            // Inisialisasi kustom
+            initAll();
+
+            // Flash notifikasi
+            showFlashNotification();
+
+            // Custom Modal
+            initModularModals();
+
+            initSubmitLoaders();
         }
-    
+
+        function initModularModals() {
+            document.querySelectorAll('[data-modal-show]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const target = button.getAttribute('data-modal-show');
+                    const modal = document.getElementById(target);
+                    if (modal) {
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-modal-hide]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const target = button.getAttribute('data-modal-hide');
+                    const modal = document.getElementById(target);
+                    if (modal) {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    }
+                });
+            });
+
+            // Optional: klik luar modal untuk tutup
+            document.querySelectorAll('.custom-modal').forEach(modal => {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    }
+                });
+            });
+        }
+
         function initAll() {
-            // PAGE PROFILE
+            // Loader dan skeleton
             initSkeleton("profile-content-skeleton", "profile-content");
-            initSubmitLoader('loaderData', 'submitData');
-            initSubmitLoader('loaderPhoto', 'submitPhoto');
+            // initSubmitLoader('loaderData', 'submitData');
+            // initSubmitLoader('loaderPhoto', 'submitPhoto');
             initImagePreview("avatarInput", "avatar-container", "submitPhoto");
-            
-            // PAGE HOME
+
             initSkeleton("home-content-skeleton", "home-content");
-            
-            // PAGE USER
+
             initSkeleton("user-management-skeleton", "user-management-content");
-            initSubmitLoader('loaderCreateUser', 'submitCreateUser');
-            initSubmitLoader('loaderUpdateUser', 'submitUpdateUser');
-            initSubmitLoader('loaderDeleteUser', 'submitDeleteUser');
-            initSubmitLoader('loaderSearchUser', 'submitSearchUser', 'contentLoader');
-            initSubmitLoader('loaderPrevUser', 'submitPrevUser', 'contentLoader');
-            initSubmitLoader('loaderNextUser', 'submitNextUser', 'contentLoader');
+            // initSubmitLoader('loaderCreateUser', 'submitCreateUser');
+            // initSubmitLoader('loaderUpdateUser', 'submitUpdateUser');
+            // initSubmitLoader('loaderDeleteUser', 'submitDeleteUser');
+            // initSubmitLoader('loaderSearchUser', 'submitSearchUser', 'contentLoader');
+            // initSubmitLoader('loaderPrevUser', 'submitPrevUser', 'contentLoader');
+            // initSubmitLoader('loaderNextUser', 'submitNextUser', 'contentLoader');
 
-
-            // PAGE SCHEDULE
-            initSubmitLoader('loaderCreateCourse', 'submitCreateCourse');
-            initSubmitLoader('loaderUpdateCourse', 'submitUpdateCourse');
-            initSubmitLoader('loaderDeleteCourse', 'submitDeleteCourse');
+            // initSubmitLoader('loaderCreateCourse', 'submitCreateCourse');
+            // initSubmitLoader('loaderUpdateCourse', 'submitUpdateCourse');
+            // initSubmitLoader('loaderDeleteCourse', 'submitDeleteCourse');
         }
-    
+
         function showFlashNotification() {
             const toasts = ['alert-2', 'alert-3', 'alert-4'];
             toasts.forEach(toastId => {
@@ -188,7 +258,8 @@
                 }
             });
         }
-    
+
+        // Event-event Turbo dan DOM
         document.addEventListener("DOMContentLoaded", reinitUI);
         document.addEventListener("turbo:load", reinitUI);
         document.addEventListener("turbo:frame-load", reinitUI);

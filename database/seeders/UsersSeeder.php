@@ -33,14 +33,15 @@ class UsersSeeder
                 'fakultas' => 'FTSP',
                 'prodi' => 'Teknik Sipil',
                 'semester' => '1',
-                'password' => password_hash('superAdmin123', PASSWORD_BCRYPT),
+                'password' => password_hash('28092004', PASSWORD_BCRYPT),
                 'gender' => 'Laki-laki',
                 'email' => 's@gmail.com',
                 'npm_nip' => '06.2024.1.07780',
                 'posisi' => 'Ketua Lab Praktikum Uji Bahan',
                 'initials' => 'CT',
                 'role_uid' => 'SWjtFccjC7',
-                'id_card' => Helper::generateUUID(20)
+                'id_card' => Helper::generateUUID(20),
+                'status' => 1
             ],
             [
                 'uid' => Helper::generateUUID(10),
@@ -56,7 +57,8 @@ class UsersSeeder
                 'posisi' => 'Pembimbing',
                 'initials' => 'FR',
                 'role_uid' => 'pY6FXnJj4P',
-                'id_card' => Helper::generateUUID(20)
+                'id_card' => Helper::generateUUID(20),
+                'status' => 1
             ],
             [
                 'uid' => Helper::generateUUID(10),
@@ -72,7 +74,8 @@ class UsersSeeder
                 'posisi' => 'Asisten',
                 'initials' => 'ND',
                 'role_uid' => 'QvnNeZJlxV',
-                'id_card' => Helper::generateUUID(20)
+                'id_card' => Helper::generateUUID(20),
+                'status' => 1
             ],
             [
                 'uid' => Helper::generateUUID(10),
@@ -88,7 +91,8 @@ class UsersSeeder
                 'posisi' => 'Praktikan',
                 'initials' => 'BY',
                 'role_uid' => 'azJw5fNCEX',
-                'id_card' => Helper::generateUUID(20)
+                'id_card' => Helper::generateUUID(20),
+                'status' => 1
             ],
         ];
 
@@ -101,7 +105,7 @@ class UsersSeeder
         $semesters = ['1', '3', '5', '7'];
         $genders = ['Laki-laki', 'Perempuan'];
 
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < 500; $i++) {
             $full_name = $faker->name;
             $name_parts = explode(' ', $full_name);
             $initials = strtoupper(substr($name_parts[0], 0, 1) . (isset($name_parts[1]) ? substr($name_parts[1], 0, 1) : ''));
@@ -122,7 +126,8 @@ class UsersSeeder
                 'posisi' => $positions[$position_index],
                 'initials' => $initials,
                 'role_uid' => $role_uids[$position_index], // Match role_uid to position
-                'id_card' => Helper::generateUUID(20)
+                'id_card' => Helper::generateUUID(20),
+                'status' => 1
             ];
         }
 

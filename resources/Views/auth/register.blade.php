@@ -71,9 +71,8 @@
                     <input name="password-confirm" id="password-confirm" type="password" placeholder="••••••••"
                         class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#468B97]" />
                 </div>
-                <button type="submit" name="registerUser" id="buttonRegister"
-                    class="w-full flex items-center justify-center bg-[#468B97] text-white rounded-md py-2 hover:bg-[#3a6f7a] transition-colors">
-                    <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderRegister"></i>
+                <button type="submit" name="registerUser" id="submitRegisterUser" data-submit-loader data-loader="#loaderRegisterUser" class="w-full flex items-center justify-center bg-[#468B97] text-white rounded-md py-2 hover:bg-[#3a6f7a] transition-colors">
+                    <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderRegisterUser"></i>
                     Register
                 </button>
             </form>
@@ -92,10 +91,16 @@
     @include('dashboard.layouts.script')
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            lucide.createIcons();
-            initSubmitLoader('loaderRegister', 'buttonRegister');
-        });
+        function reinitUI() {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+            initSubmitLoaders();
+        }
+
+        document.addEventListener("DOMContentLoaded", reinitUI);
+        document.addEventListener("turbo:load", reinitUI);
+        document.addEventListener("turbo:frame-load", reinitUI);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 </body>

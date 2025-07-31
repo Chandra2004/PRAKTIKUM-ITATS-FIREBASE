@@ -2,6 +2,7 @@
 namespace ITATS\PraktikumTeknikSipil\Helpers;
 
 use ITATS\PraktikumTeknikSipil\App\Config;
+use ITATS\PraktikumTeknikSipil\App\Database;
 
 class Helper {
     public static function url($path = '') {
@@ -98,6 +99,70 @@ class Helper {
         session_unset();
         session_destroy();
     }
+
+    public static function validate_user_session() {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    
+        if (!isset($_SESSION['user']['uid'])) return;
+    
+        $uid = $_SESSION['user']['uid'];
+        $db = Database::getInstance();
+    
+        // Ambil data user berdasarkan UID
+        $db->query("
+            SELECT users.*, 
+            roles.uid AS role_uniqId,
+            roles.role_name AS role_name
+            FROM users
+            JOIN roles ON users.role_uid = roles.uid
+            WHERE users.uid = :uid
+        ");
+        $db->bind(':uid', $uid);
+        $user = $db->single();
+    
+        // ✅ Jika user tidak ditemukan (dihapus)
+        if (!$user) {
+            self::session_destroy_all();
+            self::redirect('/login', 'error', 'User not found.');
+        }
+
+        if ($user && $user['status'] == '0') {
+            self::session_destroy_all();
+            self::redirect('/login', 'error', 'Status anda tidak lagi aktif');
+        }
+
+        if ($_SESSION['user']['role_name'] !== $user['role_name']) {
+            $_SESSION['user']['role_name'] = $user['role_name'];
+            $_SESSION['user']['role_uid'] = $user['role_uid']; // kalau mau
+    
+            // Redirect ke dashboard baru
+            switch ($user['role_name']) {
+                case $user['role_name']:
+                    self::redirect('/dashboard/' . strtolower($user['role_name']), 'warning', 'Role anda sudah berganti');
+            }
+        }
+    }
+
+
+    
+        // 🔒 Opsional: logout jika user dinonaktifkan
+        // if (isset($user['is_active']) && $user['is_active'] == 0) {
+        //     self::session_destroy_all();
+        //     header("Location: " . self::url('/login'));
+        //     exit();
+        // }
+    
+        // 🔒 Opsional: logout jika role berubah
+        // if (isset($_SESSION['user']['role_uid']) && $user['role_uid'] !== $_SESSION['user']['role_uid']) {
+        //     self::session_destroy_all();
+        //     header("Location: " . self::url('/login'));
+        //     exit();
+        // }
+    
+        // 🔄 Opsional: sinkronkan ulang isi session dengan database
+        // $_SESSION['user'] = $user; // jika kamu mau update datanya juga (nama baru, foto, dll)
+        
+     
 
     public static function e($string) {
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');

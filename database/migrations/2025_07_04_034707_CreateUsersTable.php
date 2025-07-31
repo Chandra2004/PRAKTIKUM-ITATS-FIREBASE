@@ -32,6 +32,7 @@ class Migration_2025_07_04_034707_CreateUsersTable
             $table->string('id_card');
 
             $table->foreign('role_uid')->references('uid')->on('roles')->onDelete('cascade')->onUpdate('cascade');
+            $table->enum('status', [1, 0]);
             $table->timestamps();
         });
     }

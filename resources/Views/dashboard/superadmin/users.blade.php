@@ -99,7 +99,7 @@
                                 <input id="searchInput" name="search" type="text" placeholder="Cari data user..." class="px-4 py-2 border rounded-lg" value="{{ $search }}">
                                 <input type="hidden" name="limit" value="{{ $limit }}">
                                 <input type="hidden" name="page" value="1">
-                                <button id="submitSearchUser" type="submit" class="text-white inline-flex items-center bg-[#468B97] hover:bg-[#3a6f7a] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                <button type="submit" id="submitSearchUser" data-submit-loader data-loader="#loaderSearchUser" data-content="#contentLoader" class="text-white inline-flex items-center bg-[#468B97] hover:bg-[#3a6f7a] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                     <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderSearchUser"></i>
                                     Cari
                                 </button>
@@ -112,6 +112,7 @@
                     </div>
                     <div class="overflow-x-auto p-2">                 
                         <turbo-frame id="users-table">
+                            @include('notification.notification')
                             <div class="relative">
                                 <table class="w-full text-sm text-left text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
@@ -120,48 +121,65 @@
                                             <th scope="col" class="px-6 py-3 text-center border-r hidden sm:table-cell">Email</th>
                                             <th scope="col" class="px-6 py-3 text-center border-r">NPM</th>
                                             <th scope="col" class="px-6 py-3 text-center border-r">Role</th>
+                                            <th scope="col" class="px-6 py-3 text-center border-r">Status</th>
                                             <th scope="col" class="px-6 py-3 text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody id="userTableBody">
                                         @foreach($users as $user)
-                                        <tr class="bg-white border-b" data-role="{{ $user['role_name'] }}" data-name="{{ strtolower($user['full_name']) }}" data-email="{{ strtolower($user['email']) }}" data-npm="{{ $user['npm_nip'] }}">
-                                            <td class="px-6 py-4">
-                                                <div class="font-medium text-gray-900">{{ $user['full_name'] }}</div>
-                                                <div class="text-xs text-gray-500">{{ $user['phone'] }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 hidden sm:table-cell text-center">{{ $user['email'] }}</td>
-                                            <td class="px-6 py-4 font-mono text-sm text-center">{{ $user['npm_nip'] }}</td>
-                                            <td class="px-6 py-4 text-center">
-                                                <span class="inline-flex items-center px-2 py-1 text-xs font-medium badge-{{ $user['role_name'] }} rounded-md">{{ $user['role_name'] }}</span>
-                                            </td>
-                                            <td class="px-6 py-4 text-center flex justify-center space-x-1">
-                                                <button data-modal-target="editModal-{{ $user['phone'] }}" data-modal-toggle="editModal-{{ $user['phone'] }}" class="p-2 text-gray-500 hover:bg-gray-100 rounded-full" type="button">
-                                                    <i data-lucide="edit" class="w-4 h-4"></i>
-                                                    <span class="sr-only">Edit</span>
-                                                </button>
-                                                <button data-modal-target="resetPasswordModal-{{ $user['phone'] }}" data-modal-toggle="resetPasswordModal-{{ $user['phone'] }}" class="p-2 text-blue-500 hover:bg-blue-50 hover:text-blue-600 rounded-full" type="button">
-                                                    <i data-lucide="key" class="w-4 h-4"></i>
-                                                    <span class="sr-only">Reset Password</span>
-                                                </button>
-                                                <button data-modal-target="deleteModal-{{ $user['uid'] }}" data-modal-toggle="deleteModal-{{ $user['uid'] }}" class="p-2 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-full" type="button">
-                                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                                    <span class="sr-only">Hapus</span>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                            <tr class="bg-white border-b" data-role="{{ $user['role_name'] }}" data-name="{{ strtolower($user['full_name']) }}" data-email="{{ strtolower($user['email']) }}" data-npm="{{ $user['npm_nip'] }}">
+                                                <td class="px-6 py-4">
+                                                    <div class="font-medium text-gray-900">{{ $user['full_name'] }}</div>
+                                                    <div class="text-xs text-gray-500">{{ $user['phone'] }}</div>
+                                                </td>
+                                                <td class="px-6 py-4 hidden sm:table-cell text-center">{{ $user['email'] }}</td>
+                                                <td class="px-6 py-4 font-mono text-sm text-center">{{ $user['npm_nip'] }}</td>
+                                                <td class="px-6 py-4 text-center">
+                                                    <span class="inline-flex items-center px-2 py-1 text-xs font-medium badge-{{ $user['role_name'] }} rounded-md">{{ $user['role_name'] }}</span>
+                                                </td>
+                                                <td class="px-6 py-4 font-mono text-sm text-center">
+                                                    {{-- <form id="form-{{ $user['uid'] }}" action="/dashboard/superadmin/user-management/update-status/{{ $user['id'] }}/user/{{ $user['uid'] }}" method="POST">
+                                                        @csrf
+                                                        <input name="status" {{ $user['status'] == 1 ? 'checked' : '' }} type="checkbox" class="w-8 h-8 text-green-600 bg-gray-100 rounded-lg" onchange="document.getElementById('form-{{ $user['uid'] }}').submit();" />
+                                                    </form> --}}
+
+                                                    <form action="/dashboard/superadmin/user-management/update-status/{{ $user['id'] }}/user/{{ $user['uid'] }}" method="POST" data-turbo-frame="users-table">
+                                                        @csrf
+                                                        <div class="relative">
+                                                            <i data-lucide="loader-2" class="absolute inset-0 m-auto hidden h-6 w-6 animate-spin z-10" id="loaderStatusUser-{{ $user['uid'] }}"></i>
+                                                            <input name="status" {{ $user['status'] == 1 ? 'checked' : '' }} type="checkbox" data-submit-loader data-loader="#loaderStatusUser-{{ $user['uid'] }}" class="w-8 h-8 text-green-600 bg-gray-100 rounded-lg" onchange="this.form.requestSubmit()" />
+                                                        </div>
+                                                    </form>
+                                                    {{-- <turbo-frame id="status-{{ $user['uid'] }}">
+                                                    </turbo-frame>                                                     --}}
+                                                </td>
+                                                <td class="px-6 py-4 text-center flex justify-center space-x-1">
+                                                    <button data-modal-show="editModal-{{ $user['uid'] }}" class="p-2 text-gray-500 hover:bg-gray-100 rounded-full" type="button">
+                                                        <i data-lucide="edit" class="w-4 h-4"></i>
+                                                        <span class="sr-only">Edit</span>
+                                                    </button>
+                                                    <button data-modal-show="resetPasswordModal-{{ $user['uid'] }}" class="p-2 text-blue-500 hover:bg-blue-50 hover:text-blue-600 rounded-full" type="button">
+                                                        <i data-lucide="key" class="w-4 h-4"></i>
+                                                        <span class="sr-only">Reset Password</span>
+                                                    </button>
+                                                    <button type="button" data-modal-show="deleteModal-{{ $user['uid'] }}" class="p-2 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-full">
+                                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                        <span class="sr-only">Hapus</span>
+                                                    </button>
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
 
-                                <div id="contentLoader" class="absolute inset-0 bg-white/80 flex items-center justify-center z-50">
+                                <div id="contentLoader" class="absolute inset-0 bg-white/80 flex items-center justify-center z-1">
                                     <i data-lucide="loader-2" class="h-10 w-10 animate-spin text-gray-500"></i>
                                 </div>
                             </div>
 
                             <div id="paginationWrapper" class="px-4 py-5 sm:p-6 flex justify-between items-center">
                                 <div id="pageInfo" class="text-sm text-gray-600">
-                                    Halaman <span id="currentPage">{{ $currentPage }}</span> dari <span id="totalPages">{{ $totalPages }}</span>
+                                    Halaman <span id="currentPage">{{ $currentPage }}</span> dari <span id="totalPages">{{ $totalPages }} | {{ $totalUsers }}</span>
                                 </div>
                                 <div class="flex space-x-2 items-center">
                                     <div>
@@ -177,7 +195,7 @@
                                         <input type="hidden" name="search" value="{{ $search }}">
                                         <input type="hidden" name="limit" value="{{ $limit }}">
                                         <input type="hidden" name="page" value="{{ max(1, $currentPage - 1) }}">
-                                        <button {{ $currentPage <= 1 ? 'disabled' : '' }} id="submitPrevUser" class="flex gap-2 items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-gray-100 rounded-md hover:bg-gray-300">
+                                        <button {{ $currentPage <= 1 ? 'disabled' : '' }} id="submitPrevUser" data-submit-loader data-loader="#loaderPrevUser" data-content="#contentLoader" class="flex gap-2 items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-gray-100 rounded-md hover:bg-gray-300">
                                             <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" fill="none" viewBox="0 0 14 10">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4" />
                                             </svg>
@@ -191,7 +209,7 @@
                                         <input type="hidden" name="search" value="{{ $search }}">
                                         <input type="hidden" name="limit" value="{{ $limit }}">
                                         <input type="hidden" name="page" value="{{ min($totalPages, $currentPage + 1) }}">
-                                        <button {{ $currentPage >= $totalPages ? 'disabled' : '' }} id="submitNextUser" class="flex gap-2 items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-gray-100 rounded-md hover:bg-gray-300">
+                                        <button {{ $currentPage >= $totalPages ? 'disabled' : '' }} id="submitNextUser" data-submit-loader data-loader="#loaderNextUser" data-content="#contentLoader" class="flex gap-2 items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-gray-100 rounded-md hover:bg-gray-300">
                                             <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderNextUser"></i>
                                             Next
                                             <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" fill="none" viewBox="0 0 14 10">
@@ -200,6 +218,129 @@
                                         </button>
                                     </form>
                                 </div>
+                            </div>
+
+                            <div class="modal">
+                                @foreach($users as $user)
+                                    <!-- Edit User Modal -->
+                                    <div id="editModal-{{ $user['uid'] }}" class="custom-modal fixed inset-0 hidden z-50 items-center justify-center bg-black bg-opacity-50">
+                                        <div class="relative p-4 w-full max-w-md max-h-full">
+                                            <div class="relative bg-white rounded-lg shadow">
+                                                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                                                    <h3 class="text-lg font-semibold text-[#468B97] font-space-grotesk">Edit Pengguna</h3>
+                                                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="editModal-{{ $user['uid'] }}">
+                                                        <i data-lucide="x" class="w-4 h-4"></i>
+                                                        <span class="sr-only">Tutup modal</span>
+                                                    </button>
+                                                </div>
+                                                <div class="p-4 md:p-5">
+                                                    <form action="/dashboard/superadmin/user-management/update/{{ $user['id'] }}/user/{{ $user['uid'] }}" method="POST" class="mt-4">
+                                                        @csrf
+                                                        <div class="grid gap-4">
+                                                            <div class="grid grid-cols-4 items-center gap-4">
+                                                                <label for="edit-name-{{ $user['phone'] }}" class="text-right">Nama</label>
+                                                                <input id="edit-name-{{ $user['phone'] }}" name="fullName" type="text" value="{{ $user['full_name'] }}" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]"/>
+                                                            </div>
+                                                            <div class="grid grid-cols-4 items-center gap-4">
+                                                                <label for="edit-email-{{ $user['phone'] }}" class="text-right">Email</label>
+                                                                <input id="edit-email-{{ $user['phone'] }}" name="email" type="email" value="{{ $user['email'] }}" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]"/>
+                                                            </div>
+                                                            <div class="grid grid-cols-4 items-center gap-4">
+                                                                <label for="edit-npm-{{ $user['phone'] }}" class="text-right">NPM</label>
+                                                                <input id="edit-npm-{{ $user['phone'] }}" name="npm" type="text" value="{{ $user['npm_nip'] }}" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
+                                                            </div>
+                                                            <div class="grid grid-cols-4 items-center gap-4">
+                                                                <label for="edit-role-{{ $user['phone'] }}" class="text-right">Role</label>
+                                                                <select id="edit-role-{{ $user['phone'] }}" name="role" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]">
+                                                                    @foreach($roles as $role)
+                                                                    <option value="{{ $role['uid'] }}" {{ $role['role_name'] == $user['role_name'] ? 'selected' : '' }}>{{ $role['role_name'] }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="grid grid-cols-4 items-center gap-4">
+                                                                <label for="edit-phone-{{ $user['phone'] }}" class="text-right">Nomor Telepon</label>
+                                                                <input id="edit-phone-{{ $user['phone'] }}" name="phone" type="tel" value="{{ $user['phone'] }}" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="mt-4 flex justify-end gap-2">
+                                                            <button type="button" data-modal-hide="editModal-{{ $user['uid'] }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-200">Batal</button>
+                                                            <button type="submit" data-submit-loader data-loader="#loaderEditUser-{{ $user['uid'] }}" class="flex items-center justify-center gap-2 px-4 py-2 bg-[#468B97] text-white rounded-lg hover:bg-[#3a6f7a] focus:ring-4 focus:ring-[#468B97] focus:ring-opacity-50">
+                                                                <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderEditUser-{{ $user['uid'] }}"></i>
+                                                                Simpan Perubahan
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            
+                                    <!-- Reset Password Modal -->
+                                    <div id="resetPasswordModal-{{ $user['uid'] }}" class="custom-modal fixed inset-0 hidden z-50 items-center justify-center bg-black bg-opacity-50">
+                                        <div class="relative p-4 w-full max-w-md max-h-full">
+                                            <div class="relative bg-white rounded-lg shadow">
+                                                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                                                    <h3 class="text-lg font-semibold text-[#468B97] font-space-grotesk">Reset Password</h3>
+                                                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="resetPasswordModal-{{ $user['uid'] }}">
+                                                        <i data-lucide="x" class="w-4 h-4"></i>
+                                                        <span class="sr-only">Tutup modal</span>
+                                                    </button>
+                                                </div>
+                                                <div class="p-4 md:p-5">
+                                                    <p class="text-sm text-gray-600">Masukkan password baru untuk <span class="font-semibold">{{ $user['full_name'] }}</span>. Pengguna akan diminta menggunakan password ini saat login berikutnya.</p>
+                                                    <form action="/dashboard/superadmin/user-management/update-password/{{ $user['id'] }}/user/{{ $user['uid'] }}" method="POST" class="mt-4">
+                                                        @csrf
+                                                        <div class="grid gap-4">
+                                                            <div class="grid grid-cols-4 items-center gap-4">
+                                                                <label for="new-password-{{ $user['uid'] }}" class="text-right">Password Baru</label>
+                                                                <input id="new-password-{{ $user['uid'] }}" name="password" type="password" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]"/>
+                                                            </div>
+                                                            <div class="grid grid-cols-4 items-center gap-4">
+                                                                <label for="confirm-password-{{ $user['uid'] }}" class="text-right">Konfirmasi</label>
+                                                                <input id="confirm-password-{{ $user['uid'] }}" name="passwordConfirm" type="password" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mt-4 flex justify-end gap-2">
+                                                            <button type="button" data-modal-hide="resetPasswordModal-{{ $user['uid'] }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-200">Batal</button>
+                                                            <button type="submit" data-submit-loader data-loader="#loaderResetPasswordUser-{{ $user['uid'] }}" class="flex items-center justify-center gap-2 px-4 py-2 bg-[#468B97] text-white rounded-lg hover:bg-[#3a6f7a] focus:ring-4 focus:ring-[#468B97] focus:ring-opacity-50">
+                                                                <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderResetPasswordUser-{{ $user['uid'] }}"></i>
+                                                                Simpan Password Baru
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Delete User Modal -->
+                                    <div id="deleteModal-{{ $user['uid'] }}" class="custom-modal fixed inset-0 hidden z-50 items-center justify-center bg-black bg-opacity-50">
+                                        <div class="relative p-4 w-full max-w-md max-h-full">
+                                            <div class="relative bg-white rounded-lg shadow">
+                                                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                                                    <h3 class="text-lg font-semibold text-[#468B97] font-space-grotesk">Konfirmasi Hapus Pengguna</h3>
+                                                    <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="deleteModal-{{ $user['uid'] }}">
+                                                        <i data-lucide="x" class="w-4 h-4"></i>
+                                                        <span class="sr-only">Tutup modal</span>
+                                                    </button>
+                                                </div>
+                                                <div class="p-4 md:p-5">
+                                                    <p class="text-sm text-gray-600">Apakah Anda yakin ingin menghapus pengguna <span class="font-semibold">{{ $user['full_name'] . ' | ' . $user['uid'] }}</span>? Tindakan ini tidak dapat dibatalkan.</p>
+                                                    <form action="/dashboard/superadmin/user-management/delete/{{ $user['id'] }}/user/{{ $user['uid'] }}" method="POST" class="mt-4">
+                                                        @csrf
+                                                        <div class="mt-4 flex justify-end gap-2">
+                                                            <button type="button" data-modal-hide="deleteModal-{{ $user['uid'] }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-200">Batal</button>
+                                                            <button type="submit" id="submitDeleteUser-{{ $user['uid'] }}" data-submit-loader data-loader="#loaderDeleteUser-{{ $user['uid'] }}" class="flex items-center justify px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-500 focus:ring-opacity-50">
+                                                                <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderDeleteUser-{{ $user['uid'] }}"></i>
+                                                                Hapus Pengguna
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </turbo-frame>
                     </div>
@@ -225,23 +366,23 @@
                         <div class="grid gap-4">
                             <div class="grid grid-cols-4 items-center gap-4">
                                 <label for="npm" class="text-right">NPM</label>
-                                <input name="npm" id="npm" type="text" placeholder="06.2024.1.07780" required class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
+                                <input name="npm" id="npm" type="text" placeholder="06.2024.1.07780" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
                             </div>
                             <div class="grid grid-cols-4 items-center gap-4">
                                 <label for="full-name" class="text-right">Nama Lengkap</label>
-                                <input name="full-name" id="full-name" type="text" placeholder="Ahmad Pratama" required class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
+                                <input name="full-name" id="full-name" type="text" placeholder="Ahmad Pratama" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
                             </div>
                             <div class="grid grid-cols-4 items-center gap-4">
                                 <label for="phone" class="text-right">Nomor Telepon</label>
-                                <input name="phone" id="phone" type="text" placeholder="081234567890" required class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
+                                <input name="phone" id="phone" type="text" placeholder="081234567890" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
                             </div>
                             <div class="grid grid-cols-4 items-center gap-4">
                                 <label for="email" class="text-right">Email</label>
-                                <input name="email" id="email" type="email" placeholder="ahmad.pratama@universitas.ac.id" required class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
+                                <input name="email" id="email" type="email" placeholder="ahmad.pratama@universitas.ac.id" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
                             </div>
                             <div class="grid grid-cols-4 items-center gap-4">
                                 <label for="add-role" class="text-right">Role</label>
-                                <select id="add-role" name="role" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" required>
+                                <select id="add-role" name="role" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]">
                                     @foreach($roles as $role)
                                     <option value="{{ $role['uid'] }}">{{ $role['role_name'] }}</option>
                                     @endforeach
@@ -249,141 +390,26 @@
                             </div>
                             <div class="grid grid-cols-4 items-center gap-4">
                                 <label for="password" class="text-right">Password</label>
-                                <input name="password" id="password" type="password" placeholder="••••••••" required class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
+                                <input name="password" id="password" type="password" placeholder="••••••••" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
                             </div>
                             <div class="grid grid-cols-4 items-center gap-4">
                                 <label for="password-confirm" class="text-right">Password Confirm</label>
-                                <input name="password-confirm" id="password-confirm" type="password" placeholder="••••••••" required class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
+                                <input name="password-confirm" id="password-confirm" type="password" placeholder="••••••••" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
                             </div>
                         </div>
                         <div class="mt-4 flex justify-end gap-2">
                             <button type="button" data-modal-hide="addModal" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-200">Batal</button>
-                            <button id="submitCreateUser" type="submit" name="registerUser" class="text-white inline-flex items-center bg-[#468B97] hover:bg-[#3a6f7a] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            <button type="submit" name="registerUser" id="submitCreateUser" data-submit-loader data-loader="#loaderCreateUser" class="text-white inline-flex items-center bg-[#468B97] hover:bg-[#3a6f7a] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                 <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderCreateUser"></i>
                                 Tambah Pengguna
                             </button>
                         </div>
                     </form>
+                    
                 </div>
             </div>
         </div>
     </div>
 
-    @foreach($users as $user)
-        <!-- Edit User Modal -->
-        <div id="editModal-{{ $user['phone'] }}" data-modal-backdrop="static" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div class="relative p-4 w-full max-w-md max-h-full">
-                <div class="relative bg-white rounded-lg shadow">
-                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-                        <h3 class="text-lg font-semibold text-[#468B97] font-space-grotesk">Edit Pengguna</h3>
-                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="editModal-{{ $user['phone'] }}">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                            <span class="sr-only">Tutup modal</span>
-                        </button>
-                    </div>
-                    <div class="p-4 md:p-5">
-                        <form id="editUserForm-{{ $user['phone'] }}" action="/dashboard/superadmin/user/update" method="POST" class="mt-4">
-                            @csrf
-                            <div class="grid gap-4">
-                                <div class="grid grid-cols-4 items-center gap-4">
-                                    <label for="edit-name-{{ $user['phone'] }}" class="text-right">Nama</label>
-                                    <input id="edit-name-{{ $user['phone'] }}" name="name" type="text" value="{{ $user['full_name'] }}" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" required />
-                                </div>
-                                <div class="grid grid-cols-4 items-center gap-4">
-                                    <label for="edit-email-{{ $user['phone'] }}" class="text-right">Email</label>
-                                    <input id="edit-email-{{ $user['phone'] }}" name="email" type="email" value="{{ $user['email'] }}" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" required />
-                                </div>
-                                <div class="grid grid-cols-4 items-center gap-4">
-                                    <label for="edit-npm-{{ $user['phone'] }}" class="text-right">NPM</label>
-                                    <input id="edit-npm-{{ $user['phone'] }}" name="npm" type="text" value="{{ $user['npm_nip'] }}" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
-                                </div>
-                                <div class="grid grid-cols-4 items-center gap-4">
-                                    <label for="edit-role-{{ $user['phone'] }}" class="text-right">Role</label>
-                                    <select id="edit-role-{{ $user['phone'] }}" name="role" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]">
-                                        @foreach($roles as $role)
-                                        <option value="{{ $role['uid'] }}" {{ $role['role_name'] == $user['role_name'] ? 'selected' : '' }}>{{ $role['role_name'] }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="grid grid-cols-4 items-center gap-4">
-                                    <label for="edit-phone-{{ $user['phone'] }}" class="text-right">Nomor Telepon</label>
-                                    <input id="edit-phone-{{ $user['phone'] }}" name="phone" type="tel" value="{{ $user['phone'] }}" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" />
-                                </div>
-                                <input type="hidden" name="phone" value="{{ $user['phone'] }}" />
-                            </div>
-                            <div class="mt-4 flex justify-end gap-2">
-                                <button type="button" data-modal-hide="editModal-{{ $user['phone'] }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-200">Batal</button>
-                                <button type="submit" class="px-4 py-2 bg-[#468B97] text-white rounded-lg hover:bg-[#3a6f7a] focus:ring-4 focus:ring-[#468B97] focus:ring-opacity-50">Simpan Perubahan</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reset Password Modal -->
-        <div id="resetPasswordModal-{{ $user['phone'] }}" data-modal-backdrop="static" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div class="relative p-4 w-full max-w-md max-h-full">
-                <div class="relative bg-white rounded-lg shadow">
-                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-                        <h3 class="text-lg font-semibold text-[#468B97] font-space-grotesk">Reset Password</h3>
-                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="resetPasswordModal-{{ $user['phone'] }}">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                            <span class="sr-only">Tutup modal</span>
-                        </button>
-                    </div>
-                    <div class="p-4 md:p-5">
-                        <p class="text-sm text-gray-600">Masukkan password baru untuk <span class="font-semibold">{{ $user['full_name'] }}</span>. Pengguna akan diminta menggunakan password ini saat login berikutnya.</p>
-                        <form id="resetPasswordForm-{{ $user['phone'] }}" action="/dashboard/superadmin/user/reset-password" method="POST" class="mt-4">
-                            @csrf
-                            <div class="grid gap-4">
-                                <div class="grid grid-cols-4 items-center gap-4">
-                                    <label for="new-password-{{ $user['phone'] }}" class="text-right">Password Baru</label>
-                                    <input id="new-password-{{ $user['phone'] }}" name="new_password" type="password" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" required />
-                                </div>
-                                <div class="grid grid-cols-4 items-center gap-4">
-                                    <label for="confirm-password-{{ $user['phone'] }}" class="text-right">Konfirmasi</label>
-                                    <input id="confirm-password-{{ $user['phone'] }}" name="confirm_password" type="password" class="col-span-3 p-2 border border-gray-300 rounded-lg focus:ring-[#468B97] focus:border-[#468B97]" required />
-                                </div>
-                                <input type="hidden" name="phone" value="{{ $user['phone'] }}" />
-                            </div>
-                            <div class="mt-4 flex justify-end gap-2">
-                                <button type="button" data-modal-hide="resetPasswordModal-{{ $user['phone'] }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-200">Batal</button>
-                                <button type="submit" class="px-4 py-2 bg-[#468B97] text-white rounded-lg hover:bg-[#3a6f7a] focus:ring-4 focus:ring-[#468B97] focus:ring-opacity-50">Simpan Password Baru</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Delete User Modal -->
-        <div id="deleteModal-{{ $user['uid'] }}" data-modal-backdrop="static" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div class="relative p-4 w-full max-w-md max-h-full">
-                <div class="relative bg-white rounded-lg shadow">
-                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-                        <h3 class="text-lg font-semibold text-[#468B97] font-space-grotesk">Konfirmasi Hapus Pengguna</h3>
-                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="deleteModal-{{ $user['uid'] }}">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                            <span class="sr-only">Tutup modal</span>
-                        </button>
-                    </div>
-                    <div class="p-4 md:p-5">
-                        <p class="text-sm text-gray-600">Apakah Anda yakin ingin menghapus pengguna <span class="font-semibold">{{ $user['full_name'] . ' | ' . $user['uid'] }}</span>? Tindakan ini tidak dapat dibatalkan.</p>
-                        <form id="deleteUserForm-{{ $user['phone'] }}" action="/dashboard/superadmin/user-management/delete/{{ $user['id'] }}/user/{{ $user['uid'] }}" method="POST" class="mt-4">
-                            @csrf
-                            <div class="mt-4 flex justify-end gap-2">
-                                <button type="button" data-modal-hide="deleteModal-{{ $user['uid'] }}" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-200">Batal</button>
-                                <button type="submit" id="submitDeleteUser" class="flex items-center justify px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-500 focus:ring-opacity-50">
-                                    <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderDeleteUser"></i>
-                                    Hapus Pengguna
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endforeach
 </main>
 @endsection

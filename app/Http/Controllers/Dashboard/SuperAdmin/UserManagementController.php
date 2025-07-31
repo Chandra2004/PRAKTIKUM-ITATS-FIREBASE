@@ -6,6 +6,7 @@ use ITATS\PraktikumTeknikSipil\Helpers\Helper;
 use Exception;
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\DashboardController;
 use ITATS\PraktikumTeknikSipil\Models\Dashboard\SuperAdmin\UserManagementModel;
+use Respect\Validation\Rules\Length;
 
 class UserManagementController {
     private $dashboardController;
@@ -48,6 +49,8 @@ class UserManagementController {
             'totalPages' => $totalPages,
             'limit' => $limit,
             'search' => $search,
+
+            'totalUsers' => count($this->UserManagementModel->GetAllUsers()),
         ]);
     }
 
@@ -133,8 +136,127 @@ class UserManagementController {
         }
     }
 
-    // USER UPDATE PASSWORD
     // USER UPDATE
+    public function UserUpdate($id, $uid) {
+        if(Helper::is_post() && $_POST['_token']) {
+            if(empty($id) || empty($uid)) {
+                return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'UID tidak valid');
+            }
+            
+            $fullName = filter_input(INPUT_POST, 'fullName', FILTER_UNSAFE_RAW) ?? '' ;
+            $email = filter_input(INPUT_POST, 'email', FILTER_UNSAFE_RAW) ?? '' ;
+            $npm = filter_input(INPUT_POST, 'npm', FILTER_UNSAFE_RAW) ?? '' ;
+            $role = filter_input(INPUT_POST, 'role', FILTER_UNSAFE_RAW) ?? '' ;
+            $phone = filter_input(INPUT_POST, 'phone', FILTER_UNSAFE_RAW) ?? '' ;
+            
+            if(empty($fullName) || empty($email) || empty($npm) || empty($role) || empty($phone)) {
+                return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'Field harus terisi');
+            }
+
+            try {
+                $result = $this->UserManagementModel->UserUpdate($id, $uid, $fullName, $email, $npm, $role, $phone);
+            
+                $errorMessages = [
+                    'id_not_match' => 'ID user yang anda hapus tidak cocok',
+                    'email_exists' => 'Email sudah dipakai oleh pengguna lain',
+                    'npm_exists' => 'NPM sudah dipakai oleh pengguna lain',
+                    'phone_exists' => 'Nomor telepon sudah dipakai oleh pengguna lain',
+                    false => 'Gagal update user',
+                ];
+            
+                if (isset($errorMessages[$result])) {
+                    $msg = $errorMessages[$result];
+                    return Helper::redirect('/dashboard/superadmin/user-management', 'error', $msg);
+                }
+            
+                return Helper::redirect('/dashboard/superadmin/user-management', 'success', 'User berhasil diperbarui');
+            
+            } catch (Exception $e) {
+                return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'Error: ' . $e->getMessage());
+            }
+        }
+    }
+
+    // USER UPDATE PASSWORD
+    public function UserPasswordUpdate($id, $uid) {
+        if(Helper::is_post() && $_POST['_token']) {
+            if(empty($id) || empty($uid)) {
+                return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'UID tidak valid');
+            }
+            
+            $password = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
+            $passwordConfirm = filter_input(INPUT_POST, 'passwordConfirm', FILTER_UNSAFE_RAW);
+            
+            if(empty($password) || empty($passwordConfirm)) {
+                return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'Field harus terisi');
+            }
+
+            if($password !== $passwordConfirm) {
+                return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'Password tidak valid');
+            }
+
+            if (strlen($password) < 8) {
+                return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'Password harus terdiri dari minimal 8 karakter');
+            }            
+
+            try {
+                $result = $this->UserManagementModel->UserPasswordUpdate($id, $uid, $password);
+            
+                $errorMessages = [
+                    'id_not_match' => 'ID user yang anda hapus tidak cocok',
+                    false => 'Gagal update password user',
+                ];
+            
+                if (isset($errorMessages[$result])) {
+                    $msg = $errorMessages[$result];
+                    return Helper::redirect('/dashboard/superadmin/user-management', 'error', $msg);
+                }
+            
+                return Helper::redirect('/dashboard/superadmin/user-management', 'success', 'Password user berhasil diperbarui');
+            
+            } catch (Exception $e) {
+                return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'Error: ' . $e->getMessage());
+            }
+        }
+    }
+
+    // USER STATUS
+    public function UserStatusUpdate($id, $uid) {
+        if (Helper::is_post() && $_POST['_token']) {
+
+            if(empty($id) || empty($uid)) {
+                return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'UID tidak valid');
+            }
+            
+            $status = isset($_POST['status']) ? '1' : '0';
+
+            try {
+                $result = $this->UserManagementModel->UserStatusUpdate($id, $uid, $status);
+
+                $errorMessages = [
+                    'id_not_match' => 'ID user yang anda hapus tidak cocok',
+                    false => 'Gagal update password user',
+                ];
+    
+                if (isset($errorMessages[$result])) {
+                    $msg = $errorMessages[$result];
+                    return Helper::redirect('/dashboard/superadmin/user-management', 'error', $msg);
+                }
+    
+                return Helper::redirect('/dashboard/superadmin/user-management', 'success', 'Status user berhasil diperbarui');
+            } catch (Exception $e) {
+                return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'Error: ' . $e->getMessage());
+            }
+            return Helper::redirect('/dashboard/superadmin/user-management', 'warning', 'status terkirim. isi status: ' . $status);
+        }
+
+
+
+        // if (!$uid) {
+        //     return Helper::redirect('/dashboard/superadmin/user-management', 'error', 'UID tidak ditemukan');
+        // }
+
+    }
     
     // USER DELETE
     public function UserDelete($id, $uid) {
@@ -163,4 +285,6 @@ class UserManagementController {
             }
         }
     }
+
+
 }

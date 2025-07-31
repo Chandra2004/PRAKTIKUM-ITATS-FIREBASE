@@ -170,7 +170,13 @@ class UserManagementModel extends Database {
         // Insert User
         $passwordMahasiswa = password_hash($passwordMahasiswa, PASSWORD_BCRYPT);
 
-        $this->db->query("INSERT INTO users (uid, full_name, phone, email, password, npm_nip, role_uid, initials) VALUES (:uid, :full_name, :phone, :email, :password, :npm_nip, :role_uid, :initials)");
+        $this->db->query("
+            INSERT INTO users (
+                uid, full_name, phone, email, password, npm_nip, role_uid, initials, status
+            ) VALUES (
+                :uid, :full_name, :phone, :email, :password, :npm_nip, :role_uid, :initials, :status
+            )
+        ");
         $this->db->bind(':uid', Helper::generateUUID(10));
         $this->db->bind(':full_name', $fullNameMahasiswa);
         $this->db->bind(':phone', $phoneMahasiswa);
@@ -179,11 +185,133 @@ class UserManagementModel extends Database {
         $this->db->bind(':npm_nip', $npmMahasiswa);
         $this->db->bind(':role_uid', $role);
         $this->db->bind(':initials', $initials);
+        $this->db->bind(':status', '1');
 
 
         return $this->db->execute();
     }
 
+    // USER UPDATE
+    public function UserUpdate($id, $uid, $fullName, $email, $npm, $role, $phone) {
+        // Cek id = uid
+        $this->db->query("
+            SELECT COUNT(*) as count FROM users 
+            WHERE id = :id AND uid != :uid
+        ");
+        $this->db->bind(':id', $id);
+        $this->db->bind(':uid', $uid);
+        $result = $this->db->single();
+        if ($result && $result['count'] > 0) {
+            return 'id_not_match';
+        }
+
+        // Cek email
+        $this->db->query("
+            SELECT COUNT(*) as count FROM users WHERE email = :email AND uid != :uid 
+        ");
+        $this->db->bind(':uid', $uid);
+        $this->db->bind(':email', $email);
+        $result = $this->db->single();
+        if ($result && $result['count'] > 0) {
+            return 'email_exists';
+        }
+
+        // Cek npm
+        $this->db->query("
+            SELECT COUNT(*) as count FROM users WHERE npm_nip = :npm AND uid != :uid
+        ");
+        $this->db->bind(':uid', $uid);
+        $this->db->bind(':npm', $npm);
+        $result = $this->db->single();
+        if ($result && $result['count'] > 0) {
+            return 'npm_exists';
+        }
+
+        // Cek phone
+        $this->db->query("
+            SELECT COUNT(*) as count FROM users WHERE phone = :phone AND uid != :uid
+        ");
+        $this->db->bind(':uid', $uid);
+        $this->db->bind(':phone', $phone);
+        $result = $this->db->single();
+        if ($result && $result['count'] > 0) {
+            return 'phone_exists';
+        }
+
+        $query = "
+            UPDATE users SET 
+            full_name = :full_name,
+            email = :email,
+            npm_nip = :npm_nip,
+            role_uid = :role_uid,
+            phone = :phone
+            WHERE uid = :uid
+        ";
+
+        $this->db->query($query);
+        $this->db->bind(':uid', $uid);
+        $this->db->bind(':full_name', $fullName);
+        $this->db->bind(':email', $email);
+        $this->db->bind(':npm_nip', $npm);
+        $this->db->bind(':role_uid', $role);
+        $this->db->bind(':phone', $phone);
+        
+        return $this->db->execute();
+    }
+
+    // USER PASSWORD UPDATE
+    public function UserPasswordUpdate($id, $uid, $password) {
+        // Cek kode
+        $this->db->query("
+            SELECT COUNT(*) as count FROM users 
+            WHERE id = :id AND uid != :uid
+        ");
+        $this->db->bind(':id', $id);
+        $this->db->bind(':uid', $uid);
+        $result = $this->db->single();
+        if ($result && $result['count'] > 0) {
+            return 'id_not_match';
+        }
+
+        $query = "
+            UPDATE users SET 
+            password = :password
+            WHERE uid = :uid
+        ";
+
+        $this->db->query($query);
+        $this->db->bind(':uid', $uid);
+        $this->db->bind(':password', Helper::hash_password($password));
+
+        return $this->db->execute();
+    }
+
+    // USER STATUS UPDATE
+    public function UserStatusUpdate($id, $uid, $status) {
+        // Cek kode
+        $this->db->query("
+            SELECT COUNT(*) as count FROM users 
+            WHERE id = :id AND uid != :uid
+        ");
+        $this->db->bind(':id', $id);
+        $this->db->bind(':uid', $uid);
+        $result = $this->db->single();
+        if ($result && $result['count'] > 0) {
+            return 'id_not_match';
+        }
+
+        $query = "
+            UPDATE users SET 
+            status = :status
+            WHERE uid = :uid
+        ";
+
+        $this->db->query($query);
+        $this->db->bind(':uid', $uid);
+        $this->db->bind(':status', $status);
+
+        return $this->db->execute();
+    }
 
     // USER DELETE
     public function UserDelete($id, $uid) {

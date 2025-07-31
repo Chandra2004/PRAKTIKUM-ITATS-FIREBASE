@@ -123,29 +123,59 @@
     </div>
 
 
-    <!-- Flowbite & Lucide Icons -->
+    {{-- <!-- Flowbite & Lucide Icons -->
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    Load Turbo-compatible Flowbite modules
+    <script type="module">
+        import {
+            initModals,
+            initAccordions,
+            initDropdowns,
+            initTabs,
+            initTooltips
+        } from 'https://unpkg.com/flowbite@latest/dist/flowbite.turbo.js';
+
+        window.initModals = initModals;
+        window.initAccordions = initAccordions;
+        window.initDropdowns = initDropdowns;
+        window.initTabs = initTabs;
+        window.initTooltips = initTooltips;
+    </script>
+
     @include('dashboard.layouts.script')
+
     <script>
         function reinitUI() {
-            if (window.initFlowbite) initFlowbite();
-            if (window.lucide) lucide.createIcons();
-            initAll(); // panggil init ulang semua fungsi UI termasuk skeleton & preview
-            showFlashNotification(); // panggil notifikasi
+            // Reinit semua komponen Flowbite Turbo
+            if (window.initModals) window.initModals();
+            if (window.initAccordions) window.initAccordions();
+            if (window.initDropdowns) window.initDropdowns();
+            if (window.initTabs) window.initTabs();
+            if (window.initTooltips) window.initTooltips();
+
+            // Lucide
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            // Inisialisasi lainnya (kustom kamu)
+            initAll();
+
+            // Flash notification
+            showFlashNotification();
         }
-    
+
         function initAll() {
-            // PAGE PROFILE
+            // Inisialisasi skeleton, loader, dsb (punyamu)
             initSkeleton("profile-content-skeleton", "profile-content");
             initSubmitLoader('loaderData', 'submitData');
             initSubmitLoader('loaderPhoto', 'submitPhoto');
             initImagePreview("avatarInput", "avatar-container", "submitPhoto");
-            
-            // PAGE HOME
+
             initSkeleton("home-content-skeleton", "home-content");
-            
-            // PAGE USER
+
             initSkeleton("user-management-skeleton", "user-management-content");
             initSubmitLoader('loaderCreateUser', 'submitCreateUser');
             initSubmitLoader('loaderUpdateUser', 'submitUpdateUser');
@@ -154,13 +184,11 @@
             initSubmitLoader('loaderPrevUser', 'submitPrevUser', 'contentLoader');
             initSubmitLoader('loaderNextUser', 'submitNextUser', 'contentLoader');
 
-
-            // PAGE SCHEDULE
             initSubmitLoader('loaderCreateCourse', 'submitCreateCourse');
             initSubmitLoader('loaderUpdateCourse', 'submitUpdateCourse');
             initSubmitLoader('loaderDeleteCourse', 'submitDeleteCourse');
         }
-    
+
         function showFlashNotification() {
             const toasts = ['alert-2', 'alert-3', 'alert-4'];
             toasts.forEach(toastId => {
@@ -188,7 +216,147 @@
                 }
             });
         }
-    
+
+        document.addEventListener("DOMContentLoaded", reinitUI);
+        document.addEventListener("turbo:load", reinitUI);
+        document.addEventListener("turbo:frame-load", reinitUI);
+    </script> --}}
+
+
+    <!-- Flowbite & Lucide Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    {{-- Load Turbo-compatible Flowbite modules --}}
+    <script type="module">
+        import {
+            initModals,
+            initAccordions,
+            initDropdowns,
+            initTabs,
+            initTooltips
+        } from 'https://unpkg.com/flowbite@latest/dist/flowbite.turbo.js';
+
+        window.initModals = initModals;
+        window.initAccordions = initAccordions;
+        window.initDropdowns = initDropdowns;
+        window.initTabs = initTabs;
+        window.initTooltips = initTooltips;
+    </script>
+
+    @include('dashboard.layouts.script')
+
+    <script>
+        function reinitUI() {
+            // Reinit semua komponen Flowbite Turbo
+            if (window.initModals) window.initModals();
+            if (window.initAccordions) window.initAccordions();
+            if (window.initDropdowns) window.initDropdowns();
+            if (window.initTabs) window.initTabs();
+            if (window.initTooltips) window.initTooltips();
+
+            // Lucide icons
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            // Inisialisasi kustom
+            initAll();
+
+            // Flash notifikasi
+            showFlashNotification();
+
+            // Custom Modal
+            initModularModals();
+
+            initSubmitLoaders();
+        }
+
+        function initModularModals() {
+            document.querySelectorAll('[data-modal-show]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const target = button.getAttribute('data-modal-show');
+                    const modal = document.getElementById(target);
+                    if (modal) {
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-modal-hide]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const target = button.getAttribute('data-modal-hide');
+                    const modal = document.getElementById(target);
+                    if (modal) {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    }
+                });
+            });
+
+            // Optional: klik luar modal untuk tutup
+            document.querySelectorAll('.custom-modal').forEach(modal => {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                    }
+                });
+            });
+        }
+
+        function initAll() {
+            // Loader dan skeleton
+            initSkeleton("profile-content-skeleton", "profile-content");
+            // initSubmitLoader('loaderData', 'submitData');
+            // initSubmitLoader('loaderPhoto', 'submitPhoto');
+            initImagePreview("avatarInput", "avatar-container", "submitPhoto");
+
+            initSkeleton("home-content-skeleton", "home-content");
+
+            initSkeleton("user-management-skeleton", "user-management-content");
+            // initSubmitLoader('loaderCreateUser', 'submitCreateUser');
+            // initSubmitLoader('loaderUpdateUser', 'submitUpdateUser');
+            // initSubmitLoader('loaderDeleteUser', 'submitDeleteUser');
+            // initSubmitLoader('loaderSearchUser', 'submitSearchUser', 'contentLoader');
+            // initSubmitLoader('loaderPrevUser', 'submitPrevUser', 'contentLoader');
+            // initSubmitLoader('loaderNextUser', 'submitNextUser', 'contentLoader');
+
+            // initSubmitLoader('loaderCreateCourse', 'submitCreateCourse');
+            // initSubmitLoader('loaderUpdateCourse', 'submitUpdateCourse');
+            // initSubmitLoader('loaderDeleteCourse', 'submitDeleteCourse');
+        }
+
+        function showFlashNotification() {
+            const toasts = ['alert-2', 'alert-3', 'alert-4'];
+            toasts.forEach(toastId => {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.classList.remove('opacity-0', 'translate-y-4');
+                    toast.classList.add('opacity-100', 'translate-y-0');
+                    setTimeout(() => {
+                        toast.classList.remove('opacity-100', 'translate-y-0');
+                        toast.classList.add('opacity-0', 'translate-y-4');
+                        toast.addEventListener('transitionend', () => {
+                            toast.style.display = 'none';
+                        }, { once: true });
+                    }, 10000);
+                    const closeButton = toast.querySelector('[data-dismiss-target="#' + toastId + '"]');
+                    if (closeButton) {
+                        closeButton.addEventListener('click', () => {
+                            toast.classList.remove('opacity-100', 'translate-y-0');
+                            toast.classList.add('opacity-0', 'translate-y-4');
+                            toast.addEventListener('transitionend', () => {
+                                toast.style.display = 'none';
+                            }, { once: true });
+                        });
+                    }
+                }
+            });
+        }
+
+        // Event-event Turbo dan DOM
         document.addEventListener("DOMContentLoaded", reinitUI);
         document.addEventListener("turbo:load", reinitUI);
         document.addEventListener("turbo:frame-load", reinitUI);

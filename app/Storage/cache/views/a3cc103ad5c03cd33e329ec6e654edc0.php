@@ -16,6 +16,7 @@
 </head>
 
 <body class="bg-background min-h-screen flex flex-col font-body antialiased">
+
     <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-soft">
         <div class="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
             <a href="/"
@@ -44,7 +45,7 @@
                     aria-label="Daftar akun baru">Register</a>
                 <?php else: ?>
                 <a href="/logout"
-                    class="text-sm font-medium bg-primary text-white hover:bg-primary/90 px-4 py-2 rounded-md transition-colors"
+                    class="text-sm font-medium bg-[#468B97] text-white hover:bg-[#468B97]/90 px-4 py-2 rounded-md transition-colors"
                     aria-label="Daftar akun baru">Logout</a>
                 <?php endif; ?>
             </nav>
