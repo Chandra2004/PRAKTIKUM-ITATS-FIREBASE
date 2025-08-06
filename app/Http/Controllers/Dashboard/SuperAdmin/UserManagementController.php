@@ -285,6 +285,4 @@ class UserManagementController {
             }
         }
     }
-
-
 }

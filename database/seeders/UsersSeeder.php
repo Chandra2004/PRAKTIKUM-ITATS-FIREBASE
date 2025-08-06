@@ -105,7 +105,7 @@ class UsersSeeder
         $semesters = ['1', '3', '5', '7'];
         $genders = ['Laki-laki', 'Perempuan'];
 
-        for ($i = 0; $i < 500; $i++) {
+        for ($i = 0; $i < 1; $i++) {
             $full_name = $faker->name;
             $name_parts = explode(' ', $full_name);
             $initials = strtoupper(substr($name_parts[0], 0, 1) . (isset($name_parts[1]) ? substr($name_parts[1], 0, 1) : ''));

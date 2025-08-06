@@ -32,7 +32,6 @@ class Helper {
         }
     }
 
-
     public static function redirectToNotFound() {
         header("Location: " . self::url('/404'));
         exit();
@@ -143,27 +142,6 @@ class Helper {
         }
     }
 
-
-    
-        // 🔒 Opsional: logout jika user dinonaktifkan
-        // if (isset($user['is_active']) && $user['is_active'] == 0) {
-        //     self::session_destroy_all();
-        //     header("Location: " . self::url('/login'));
-        //     exit();
-        // }
-    
-        // 🔒 Opsional: logout jika role berubah
-        // if (isset($_SESSION['user']['role_uid']) && $user['role_uid'] !== $_SESSION['user']['role_uid']) {
-        //     self::session_destroy_all();
-        //     header("Location: " . self::url('/login'));
-        //     exit();
-        // }
-    
-        // 🔄 Opsional: sinkronkan ulang isi session dengan database
-        // $_SESSION['user'] = $user; // jika kamu mau update datanya juga (nama baru, foto, dll)
-        
-     
-
     public static function e($string) {
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
     }
@@ -248,6 +226,6 @@ class Helper {
         header('Content-Type: application/json');
         echo json_encode($data);
         exit();
-    }   
+    }
 }
 ?>

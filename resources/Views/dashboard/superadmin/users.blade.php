@@ -82,9 +82,15 @@
     <div id="user-management-content" class="hidden">
         <main class="p-4 sm:p-6">
             <!-- Page Header -->
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <h1 class="text-2xl font-bold text-[#468B97] font-space-grotesk">Manajemen Pengguna</h1>
-                <p class="mt-1 text-sm text-gray-600">Kelola data pengguna sistem, termasuk menambahkan, mengedit, dan menghapus pengguna.</p>
+            <div class="flex items-center justify-between mb-14">
+                <div>
+                    <h1 class="text-2xl font-bold text-[#468B97] font-space-grotesk">Manajemen Pengguna</h1>
+                    <p class="mt-1 text-sm text-gray-600">Kelola data pengguna sistem, termasuk menambahkan, mengedit, dan menghapus pengguna.</p>
+                </div>
+                <button data-modal-target="addModal" data-modal-toggle="addModal" class="flex items-center gap-2 bg-[#468B97] text-white px-4 py-2 rounded-lg hover:bg-[#3a6f7a] focus:ring-4 focus:ring-[#468B97] focus:ring-opacity-50">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    Tambah Pengguna
+                </button>
             </div>
 
             <!-- Card -->
@@ -104,10 +110,6 @@
                                     Cari
                                 </button>
                             </form>
-                            <button data-modal-target="addModal" data-modal-toggle="addModal" class="flex items-center gap-2 bg-[#468B97] text-white px-4 py-2 rounded-lg hover:bg-[#3a6f7a] focus:ring-4 focus:ring-[#468B97] focus:ring-opacity-50">
-                                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                                Tambah Pengguna
-                            </button>
                         </div>
                     </div>
                     <div class="overflow-x-auto p-2">                 
@@ -138,11 +140,6 @@
                                                     <span class="inline-flex items-center px-2 py-1 text-xs font-medium badge-{{ $user['role_name'] }} rounded-md">{{ $user['role_name'] }}</span>
                                                 </td>
                                                 <td class="px-6 py-4 font-mono text-sm text-center">
-                                                    {{-- <form id="form-{{ $user['uid'] }}" action="/dashboard/superadmin/user-management/update-status/{{ $user['id'] }}/user/{{ $user['uid'] }}" method="POST">
-                                                        @csrf
-                                                        <input name="status" {{ $user['status'] == 1 ? 'checked' : '' }} type="checkbox" class="w-8 h-8 text-green-600 bg-gray-100 rounded-lg" onchange="document.getElementById('form-{{ $user['uid'] }}').submit();" />
-                                                    </form> --}}
-
                                                     <form action="/dashboard/superadmin/user-management/update-status/{{ $user['id'] }}/user/{{ $user['uid'] }}" method="POST" data-turbo-frame="users-table">
                                                         @csrf
                                                         <div class="relative">
@@ -150,8 +147,6 @@
                                                             <input name="status" {{ $user['status'] == 1 ? 'checked' : '' }} type="checkbox" data-submit-loader data-loader="#loaderStatusUser-{{ $user['uid'] }}" class="w-8 h-8 text-green-600 bg-gray-100 rounded-lg" onchange="this.form.requestSubmit()" />
                                                         </div>
                                                     </form>
-                                                    {{-- <turbo-frame id="status-{{ $user['uid'] }}">
-                                                    </turbo-frame>                                                     --}}
                                                 </td>
                                                 <td class="px-6 py-4 text-center flex justify-center space-x-1">
                                                     <button data-modal-show="editModal-{{ $user['uid'] }}" class="p-2 text-gray-500 hover:bg-gray-100 rounded-full" type="button">
@@ -179,7 +174,7 @@
 
                             <div id="paginationWrapper" class="px-4 py-5 sm:p-6 flex justify-between items-center">
                                 <div id="pageInfo" class="text-sm text-gray-600">
-                                    Halaman <span id="currentPage">{{ $currentPage }}</span> dari <span id="totalPages">{{ $totalPages }} | {{ $totalUsers }}</span>
+                                    Halaman <span id="currentPage">{{ $currentPage }}</span> dari <span id="totalPages">{{ $totalPages }} | Total : {{ $totalUsers }}</span>
                                 </div>
                                 <div class="flex space-x-2 items-center">
                                     <div>

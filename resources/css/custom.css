@@ -60,7 +60,9 @@ body {
 }
 
 /* CALENDAR */
-
+.today:hover {
+    background-color: #468B97 !important;
+}
 
 
 

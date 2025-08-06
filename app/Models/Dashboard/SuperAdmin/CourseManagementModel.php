@@ -41,7 +41,7 @@ class CourseManagementModel extends Database {
         return $this->db->resultSet();
     }
 
-    public function CourseCreate($code, $title, $date, $creator, $description) {
+    public function CourseCreate($code, $title, $creator, $description) {
         // Cek kode
         $this->db->query("
             SELECT COUNT(*) as count FROM courses WHERE code_course = :code_course
@@ -64,21 +64,20 @@ class CourseManagementModel extends Database {
 
         $this->db->query("
             INSERT INTO courses 
-            (uid, code_course, title_course, description_course, date_course, uid_creator_course) 
+            (uid, code_course, title_course, description_course, uid_creator_course) 
             VALUES 
-            (:uid, :code_course, :title_course, :description_course, :date_course, :uid_creator_course)
+            (:uid, :code_course, :title_course, :description_course, :uid_creator_course)
         ");
         $this->db->bind(':uid', Helper::generateUUID(10));
         $this->db->bind(':code_course', $code);
         $this->db->bind(':title_course', $title);
         $this->db->bind(':description_course', $description);
-        $this->db->bind(':date_course', $date);
         $this->db->bind(':uid_creator_course', $creator);
 
         return $this->db->execute();
     }
 
-    public function CourseUpdate($uid, $code, $title, $date, $creator, $description) {
+    public function CourseUpdate($uid, $code, $title, $creator, $description) {
         // Cek kode
         $this->db->query("
             SELECT COUNT(*) as count FROM courses 
@@ -108,7 +107,6 @@ class CourseManagementModel extends Database {
             code_course = :code_course,
             title_course = :title_course,
             description_course = :description_course,
-            date_course = :date_course,
             uid_creator_course = :uid_creator_course
             WHERE uid = :uid
         ";
@@ -118,7 +116,6 @@ class CourseManagementModel extends Database {
         $this->db->bind(':code_course', $code);
         $this->db->bind(':title_course', $title);
         $this->db->bind(':description_course', $description);
-        $this->db->bind(':date_course', $date);
         $this->db->bind(':uid_creator_course', $creator);
 
         return $this->db->execute();

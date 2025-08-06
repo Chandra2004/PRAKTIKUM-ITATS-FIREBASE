@@ -30,6 +30,7 @@ use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\HomeSuperAd
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\ModuleManagementController;
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\PaymentManagementController;
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\ProfileSuperAdminController;
+use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\SessionManagementController;
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\UserManagementController;
 
 
@@ -147,7 +148,115 @@ Router::add('POST', '/register/auth', RegisterController::class, 'RegisterUser',
             RegisterValidator::class,
             [RoleMiddleware::class, ['SuperAdmin']]
         ]);
+    
+    // PAYMENT-MANAGEMENT
+    Router::add('GET', '/dashboard/superadmin/payment-management', PaymentManagementController::class, 'Index', [
+        AuthMiddleware::class,
+        WAFMiddleware::class,
+        [RoleMiddleware::class, ['SuperAdmin']]
+    ]);
 
+        // UPDATE STATUS
+        // Router::add('POST', '/dashboard/superadmin/payment-management/update-status/{id}/user/{uid}', UserManagementController::class, 'UserStatusUpdate', [
+        //     AuthMiddleware::class,
+        //     WAFMiddleware::class,
+        //     CsrfMiddleware::class, 
+        //     RegisterValidator::class,
+        //     [RoleMiddleware::class, ['SuperAdmin']]
+        // ]);
+
+    // COURSE-MANAGEMENT
+    Router::add('GET', '/dashboard/superadmin/course-management', CourseManagementController::class, 'Index', [
+        AuthMiddleware::class,
+        WAFMiddleware::class,
+        [RoleMiddleware::class, ['SuperAdmin']]
+    ]);
+    
+        // CREATE
+        Router::add('POST', '/dashboard/superadmin/course-management/create', CourseManagementController::class, 'CourseCreate', [
+            AuthMiddleware::class,
+            WAFMiddleware::class,
+            CsrfMiddleware::class,
+            [RoleMiddleware::class, ['SuperAdmin']]
+        ]);
+        
+        // UPDATE
+        Router::add('POST', '/dashboard/superadmin/course-management/update/{uidcourse}', CourseManagementController::class, 'CourseUpdate', [
+            AuthMiddleware::class,
+            WAFMiddleware::class,
+            CsrfMiddleware::class,
+            [RoleMiddleware::class, ['SuperAdmin']]
+        ]);
+        
+        // DELETE
+        Router::add('POST', '/dashboard/superadmin/course-management/delete/{uidcourse}', CourseManagementController::class, 'CourseDelete', [
+            AuthMiddleware::class,
+            WAFMiddleware::class,
+            CsrfMiddleware::class,
+            [RoleMiddleware::class, ['SuperAdmin']]
+        ]);
+
+    // SESSION-MANAGEMENT
+    Router::add('GET', '/dashboard/superadmin/session-management', SessionManagementController::class, 'Index', [
+        AuthMiddleware::class,
+        WAFMiddleware::class,
+        [RoleMiddleware::class, ['SuperAdmin']]
+    ]);
+
+        // CREATE
+        Router::add('POST', '/dashboard/superadmin/session-management/create', SessionManagementController::class, 'SessionCreate', [
+            AuthMiddleware::class,
+            WAFMiddleware::class,
+            CsrfMiddleware::class,
+            [RoleMiddleware::class, ['SuperAdmin']]
+        ]);
+
+        // UPDATE
+        Router::add('POST', '/dashboard/superadmin/session-management/update/{uid}', SessionManagementController::class, 'SessionUpdate', [
+            AuthMiddleware::class,
+            WAFMiddleware::class,
+            CsrfMiddleware::class,
+            [RoleMiddleware::class, ['SuperAdmin']]
+        ]);
+
+        // DELETE
+        Router::add('POST', '/dashboard/superadmin/session-management/delete/{uid}', SessionManagementController::class, 'SessionDelete', [
+            AuthMiddleware::class,
+            WAFMiddleware::class,
+            CsrfMiddleware::class,
+            [RoleMiddleware::class, ['SuperAdmin']]
+        ]);
+        
+    // MODULE-MANAGEMENT
+    Router::add('GET', '/dashboard/superadmin/module-management', ModuleManagementController::class, 'Index', [
+        AuthMiddleware::class,
+        WAFMiddleware::class,
+        [RoleMiddleware::class, ['SuperAdmin']]
+    ]);
+        
+        // CREATE
+        Router::add('POST', '/dashboard/superadmin/module-management/create', ModuleManagementController::class, 'ModuleCreate', [
+            AuthMiddleware::class,
+            WAFMiddleware::class,
+            CsrfMiddleware::class,
+            [RoleMiddleware::class, ['SuperAdmin']]
+        ]);
+
+        // UPDATE
+        Router::add('POST', '/dashboard/superadmin/module-management/update/{uid}', ModuleManagementController::class, 'ModuleUpdate', [
+            AuthMiddleware::class,
+            WAFMiddleware::class,
+            CsrfMiddleware::class,
+            [RoleMiddleware::class, ['SuperAdmin']]
+        ]);
+
+        // DELETE
+        Router::add('POST', '/dashboard/superadmin/module-management/delete/{uid}', ModuleManagementController::class, 'ModuleDelete', [
+            AuthMiddleware::class,
+            WAFMiddleware::class,
+            CsrfMiddleware::class,
+            [RoleMiddleware::class, ['SuperAdmin']]
+        ]);
 
 
 
@@ -253,44 +362,11 @@ Router::add('POST', '/register/auth', RegisterController::class, 'RegisterUser',
 
 
 
-// Router::add('GET', '/dashboard/superadmin/payment-management', PaymentManagementController::class, 'Index', [
-//     AuthMiddleware::class,
-//     WAFMiddleware::class,
-//     [RoleMiddleware::class, ['SuperAdmin']]
-// ]);
 
-Router::add('GET', '/dashboard/superadmin/courses-management', CourseManagementController::class, 'Index', [
-    AuthMiddleware::class,
-    WAFMiddleware::class,
-    [RoleMiddleware::class, ['SuperAdmin']]
-]);
 
-Router::add('POST', '/dashboard/superadmin/courses-management/create', CourseManagementController::class, 'CourseCreate', [
-    AuthMiddleware::class,
-    WAFMiddleware::class,
-    CsrfMiddleware::class,
-    [RoleMiddleware::class, ['SuperAdmin']]
-]);
 
-Router::add('POST', '/dashboard/superadmin/courses-management/update/{uidcourse}', CourseManagementController::class, 'CourseUpdate', [
-    AuthMiddleware::class,
-    WAFMiddleware::class,
-    CsrfMiddleware::class,
-    [RoleMiddleware::class, ['SuperAdmin']]
-]);
 
-Router::add('POST', '/dashboard/superadmin/courses-management/delete/{uidcourse}', CourseManagementController::class, 'CourseDelete', [
-    AuthMiddleware::class,
-    WAFMiddleware::class,
-    CsrfMiddleware::class,
-    [RoleMiddleware::class, ['SuperAdmin']]
-]);
 
-// Router::add('GET', '/dashboard/superadmin/modules-management', ModuleManagementController::class, 'Index', [
-//     AuthMiddleware::class,
-//     WAFMiddleware::class,
-//     [RoleMiddleware::class, ['SuperAdmin']]
-// ]);
 
 
 // // PROFILE SUPER ADMIN

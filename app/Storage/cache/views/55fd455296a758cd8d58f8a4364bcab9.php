@@ -23,7 +23,7 @@
                 <div class="flex flex-col h-full p-4 overflow-y-auto">
                     <!-- Sidebar Header -->
                     <div class="py-3 px-5">
-                        <a data-turbo="false" href="<?php echo e($link); ?>" class="flex items-center gap-2 font-bold text-lg font-headline">
+                        <a href="<?php echo e($link); ?>" class="flex items-center gap-2 font-bold text-lg font-headline">
                             <i data-lucide="hard-hat" class="h-6 w-6 text-[#468B97]"></i>
                             <span>SIPIL PRAKTIKUM</span>
                         </a>
@@ -58,15 +58,21 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="<?php echo e($link); ?>/courses-management" class="<?php echo e(request()->is($link . '/courses-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900'); ?> flex items-center py-3 px-5 rounded-lg">
+                                <a href="<?php echo e($link); ?>/course-management" class="<?php echo e(request()->is($link . '/course-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900'); ?> flex items-center py-3 px-5 rounded-lg">
                                     <i data-lucide="book-open" class="w-5 h-5"></i>
                                     <span class="ml-3">Praktikum</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="<?php echo e($link); ?>/schedule-management" class="<?php echo e(request()->is($link . '/schedule-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900'); ?> flex items-center py-3 px-5 rounded-lg">
+                                <a href="<?php echo e($link); ?>/session-management" class="<?php echo e(request()->is($link . '/session-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900'); ?> flex items-center py-3 px-5 rounded-lg">
+                                    <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+                                    <span class="ml-3">Sesi</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<?php echo e($link); ?>/module-management" class="<?php echo e(request()->is($link . '/module-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900'); ?> flex items-center py-3 px-5 rounded-lg">
                                     <i data-lucide="book-text" class="w-5 h-5"></i>
-                                    <span class="ml-3">Jadwal</span>
+                                    <span class="ml-3">Modul</span>
                                 </a>
                             </li>
                             <?php endif; ?>
@@ -114,18 +120,12 @@
 
                 <?php echo $__env->make('notification.notification', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
                 <!-- Main -->
-                
-                    <?php echo $__env->yieldContent('dashboard-content'); ?>
-                
+                <?php echo $__env->yieldContent('dashboard-content'); ?>
                 
             </div>
         </div>
     </div>
-
-
     
-
-
     <!-- Flowbite & Lucide Icons -->
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>

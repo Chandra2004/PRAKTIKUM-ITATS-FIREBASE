@@ -2,35 +2,88 @@
 
 namespace ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin;
 
+use DateTime;
 use ITATS\PraktikumTeknikSipil\App\{Config, Database, View, CacheManager};
 use ITATS\PraktikumTeknikSipil\Helpers\Helper;
 use Exception;
+use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\DashboardController;
+use ITATS\PraktikumTeknikSipil\Models\Dashboard\SuperAdmin\CourseManagementModel;
+use ITATS\PraktikumTeknikSipil\Models\Dashboard\SuperAdmin\ModuleManagementModel;
 
 class ModuleManagementController {
     private $dashboardController;
     private $linkDashboard;
+    private $ModuleManagementModel;
+    private $CourseManagementModel;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->dashboardController = new DashboardController();
         $this->linkDashboard =$this->dashboardController->LinkDashboard();
+        $this->ModuleManagementModel = new ModuleManagementModel();
+        $this->CourseManagementModel = new CourseManagementModel();
     }
-
-    public function Index()
-    {
+    
+    public function Index() {
         $notification = Helper::get_flash('notification');
-
-        View::render('dashboard.superadmin.schedule', [
-            'title' => 'Schedule Management | Praktikum Teknik Sipil ITATS',
+        
+        View::render('dashboard.superadmin.module', [
+            'title' => 'Module Management | Praktikum Teknik Sipil ITATS',
             'notification' => $notification,
             'link' => $this->linkDashboard,
-
+            
             'uid' => $_SESSION['user']['uid'],
             'profilePicture' => $_SESSION['user']['profile_picture'],
             'fullName' => $_SESSION['user']['full_name'],
             'email' => $_SESSION['user']['email'],
             'initials' => $_SESSION['user']['initials'],
             'roleName' => $_SESSION['user']['role_name'],
+            
+            'coursesList' => $this->CourseManagementModel->GetAllCourses(),
+            'modulesList' => $this->ModuleManagementModel->GetAllModules(),
         ]);
+    }
+
+    public function ModuleCreate() {
+        if (Helper::is_post() && Helper::is_csrf()) {
+            $course = filter_input(INPUT_POST, 'course', FILTER_SANITIZE_SPECIAL_CHARS);
+            $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_SPECIAL_CHARS);
+            $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_SPECIAL_CHARS);
+            $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_SPECIAL_CHARS);
+            $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS);
+    
+            if (empty($course) || empty($title) || empty($date) || empty($location) || empty($description)) {
+                return Helper::redirect('/dashboard/superadmin/module-management', 'error', 'all fields must be filled');
+            }
+    
+            try {
+                if (!empty($date) && !DateTime::createFromFormat('Y-m-d', $date)) {
+                    return Helper::redirect('/dashboard/superadmin/module-management', 'error', 'Format tanggal tidak valid');
+                }
+    
+                $result = $this->ModuleManagementModel->ModuleCreate(
+                    $course,
+                    $title,
+                    $date,
+                    $location,
+                    $description
+                );
+    
+                $errorMessages = [
+                    'required_fields_missing' => 'Praktikum dan judul modul wajib diisi',
+                    'invalid_date_format' => 'Format tanggal tidak valid',
+                    'module_exists' => 'Modul dengan judul tersebut sudah ada untuk praktikum ini (tidak peka terhadap huruf besar/kecil)',
+                    false => 'Gagal menambahkan modul',
+                ];
+    
+                if (isset($errorMessages[$result])) {
+                    return Helper::redirect('/dashboard/superadmin/module-management', 'error', $errorMessages[$result]);
+                }
+    
+                return Helper::redirect('/dashboard/superadmin/module-management', 'success', 'Modul berhasil ditambahkan');
+            } catch (Exception $e) {
+                return Helper::redirect('/dashboard/superadmin/module-management', 'error', 'Error: ' . $e->getMessage());
+            }
+        }
+
     }
 }

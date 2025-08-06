@@ -6,13 +6,13 @@
     <section class="hero-section relative py-16 sm:py-24 md:py-32 flex items-center">
         <div class="slideshow-container">
             <div class="slideshow-image active"
-                style="background-image: url('{{ url("assets/images/internal/background-1.png") }}')">
+                style="background-image: url('{{ url("assets/images/internal/background-1.webp") }}')">
             </div>
             <div class="slideshow-image"
-                style="background-image: url('{{ url("assets/images/internal/background-2.png") }}')">
+                style="background-image: url('{{ url("assets/images/internal/background-2.webp") }}')">
             </div>
             <div class="slideshow-image"
-                style="background-image: url('{{ url("assets/images/internal/background-3.png") }}')">
+                style="background-image: url('{{ url("assets/images/internal/background-3.webp") }}')">
             </div>
         </div>
         <div class="absolute inset-0 bg-black/50"></div>

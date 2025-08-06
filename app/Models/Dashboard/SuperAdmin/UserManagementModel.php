@@ -130,7 +130,7 @@ class UserManagementModel extends Database {
     }   
     
     // USER CREATE
-    public function UserCreate($npmMahasiswa, $fullNameMahasiswa, $phoneMahasiswa, $emailMahasiswa, $passwordMahasiswa, $initials, $role, $roleName) {
+    public function UserCreate($npmMahasiswa, $fullNameMahasiswa, $phoneMahasiswa, $emailMahasiswa, $passwordMahasiswa, $initials, $role, $roleName = null) {
         // Cek email
         $this->db->query("SELECT COUNT(*) as count FROM users WHERE email = :email");
         $this->db->bind(':email', $emailMahasiswa);

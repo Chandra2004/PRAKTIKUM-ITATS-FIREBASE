@@ -15,7 +15,6 @@ class Migration_2025_07_28_055718_CreateCoursesTable
             $table->string('code_course');
             $table->string('title_course');
             $table->text('description_course');
-            $table->date('date_course');
 
             $table->string('uid_creator_course');
             $table->foreign('uid_creator_course')->references('uid')->on('users')->onDelete('cascade')->onUpdate('cascade');

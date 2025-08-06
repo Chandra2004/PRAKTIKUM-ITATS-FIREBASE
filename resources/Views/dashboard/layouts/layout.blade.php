@@ -23,7 +23,7 @@
                 <div class="flex flex-col h-full p-4 overflow-y-auto">
                     <!-- Sidebar Header -->
                     <div class="py-3 px-5">
-                        <a data-turbo="false" href="{{ $link }}" class="flex items-center gap-2 font-bold text-lg font-headline">
+                        <a href="{{ $link }}" class="flex items-center gap-2 font-bold text-lg font-headline">
                             <i data-lucide="hard-hat" class="h-6 w-6 text-[#468B97]"></i>
                             <span>SIPIL PRAKTIKUM</span>
                         </a>
@@ -58,15 +58,21 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ $link }}/courses-management" class="{{ request()->is($link . '/courses-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900' }} flex items-center py-3 px-5 rounded-lg">
+                                <a href="{{ $link }}/course-management" class="{{ request()->is($link . '/course-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900' }} flex items-center py-3 px-5 rounded-lg">
                                     <i data-lucide="book-open" class="w-5 h-5"></i>
                                     <span class="ml-3">Praktikum</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ $link }}/schedule-management" class="{{ request()->is($link . '/schedule-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900' }} flex items-center py-3 px-5 rounded-lg">
+                                <a href="{{ $link }}/session-management" class="{{ request()->is($link . '/session-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900' }} flex items-center py-3 px-5 rounded-lg">
+                                    <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+                                    <span class="ml-3">Sesi</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ $link }}/module-management" class="{{ request()->is($link . '/module-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900' }} flex items-center py-3 px-5 rounded-lg">
                                     <i data-lucide="book-text" class="w-5 h-5"></i>
-                                    <span class="ml-3">Jadwal</span>
+                                    <span class="ml-3">Modul</span>
                                 </a>
                             </li>
                             @endif
@@ -114,115 +120,12 @@
 
                 @include('notification.notification')
                 <!-- Main -->
-                {{-- <turbo-frame id="main"> --}}
-                    @yield('dashboard-content')
-                {{-- </turbo-frame> --}}
+                @yield('dashboard-content')
                 
             </div>
         </div>
     </div>
-
-
-    {{-- <!-- Flowbite & Lucide Icons -->
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    Load Turbo-compatible Flowbite modules
-    <script type="module">
-        import {
-            initModals,
-            initAccordions,
-            initDropdowns,
-            initTabs,
-            initTooltips
-        } from 'https://unpkg.com/flowbite@latest/dist/flowbite.turbo.js';
-
-        window.initModals = initModals;
-        window.initAccordions = initAccordions;
-        window.initDropdowns = initDropdowns;
-        window.initTabs = initTabs;
-        window.initTooltips = initTooltips;
-    </script>
-
-    @include('dashboard.layouts.script')
-
-    <script>
-        function reinitUI() {
-            // Reinit semua komponen Flowbite Turbo
-            if (window.initModals) window.initModals();
-            if (window.initAccordions) window.initAccordions();
-            if (window.initDropdowns) window.initDropdowns();
-            if (window.initTabs) window.initTabs();
-            if (window.initTooltips) window.initTooltips();
-
-            // Lucide
-            if (window.lucide) {
-                lucide.createIcons();
-            }
-
-            // Inisialisasi lainnya (kustom kamu)
-            initAll();
-
-            // Flash notification
-            showFlashNotification();
-        }
-
-        function initAll() {
-            // Inisialisasi skeleton, loader, dsb (punyamu)
-            initSkeleton("profile-content-skeleton", "profile-content");
-            initSubmitLoader('loaderData', 'submitData');
-            initSubmitLoader('loaderPhoto', 'submitPhoto');
-            initImagePreview("avatarInput", "avatar-container", "submitPhoto");
-
-            initSkeleton("home-content-skeleton", "home-content");
-
-            initSkeleton("user-management-skeleton", "user-management-content");
-            initSubmitLoader('loaderCreateUser', 'submitCreateUser');
-            initSubmitLoader('loaderUpdateUser', 'submitUpdateUser');
-            initSubmitLoader('loaderDeleteUser', 'submitDeleteUser');
-            initSubmitLoader('loaderSearchUser', 'submitSearchUser', 'contentLoader');
-            initSubmitLoader('loaderPrevUser', 'submitPrevUser', 'contentLoader');
-            initSubmitLoader('loaderNextUser', 'submitNextUser', 'contentLoader');
-
-            initSubmitLoader('loaderCreateCourse', 'submitCreateCourse');
-            initSubmitLoader('loaderUpdateCourse', 'submitUpdateCourse');
-            initSubmitLoader('loaderDeleteCourse', 'submitDeleteCourse');
-        }
-
-        function showFlashNotification() {
-            const toasts = ['alert-2', 'alert-3', 'alert-4'];
-            toasts.forEach(toastId => {
-                const toast = document.getElementById(toastId);
-                if (toast) {
-                    toast.classList.remove('opacity-0', 'translate-y-4');
-                    toast.classList.add('opacity-100', 'translate-y-0');
-                    setTimeout(() => {
-                        toast.classList.remove('opacity-100', 'translate-y-0');
-                        toast.classList.add('opacity-0', 'translate-y-4');
-                        toast.addEventListener('transitionend', () => {
-                            toast.style.display = 'none';
-                        }, { once: true });
-                    }, 10000);
-                    const closeButton = toast.querySelector('[data-dismiss-target="#' + toastId + '"]');
-                    if (closeButton) {
-                        closeButton.addEventListener('click', () => {
-                            toast.classList.remove('opacity-100', 'translate-y-0');
-                            toast.classList.add('opacity-0', 'translate-y-4');
-                            toast.addEventListener('transitionend', () => {
-                                toast.style.display = 'none';
-                            }, { once: true });
-                        });
-                    }
-                }
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", reinitUI);
-        document.addEventListener("turbo:load", reinitUI);
-        document.addEventListener("turbo:frame-load", reinitUI);
-    </script> --}}
-
-
+    
     <!-- Flowbite & Lucide Icons -->
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>

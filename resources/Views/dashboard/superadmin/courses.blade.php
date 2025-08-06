@@ -18,7 +18,7 @@
             <div class="relative bg-white rounded-lg shadow">
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-                    <h3 class="text-lg font-semibold text-gray-900" id="modalTitle">
+                    <h3 class="text-lg font-semibold text-[#468B97]" id="modalTitle">
                         Tambah Praktikum
                     </h3>
                     <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="create-modal">
@@ -29,7 +29,7 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <form class="p-4 md:p-5" action="/dashboard/superadmin/courses-management/create" method="POST">
+                <form class="p-4 md:p-5" action="/dashboard/superadmin/course-management/create" method="POST">
                     @csrf
                     <div class="grid gap-4 mb-4 grid-cols-2">
                         <div class="col-span-2">
@@ -39,10 +39,6 @@
                         <div class="col-span-2">
                             <label for="title" class="block mb-2 text-sm font-medium text-gray-900">Judul</label>
                             <input id="title" type="text" name="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97]-600 focus:border-[#468B97]-600 block w-full p-2.5" placeholder="Judul Praktikum">
-                        </div>
-                        <div class="col-span-2">
-                            <label for="date" class="block mb-2 text-sm font-medium text-gray-900">Date</label>
-                            <input id="date" type="Date" name="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97]-600 focus:border-[#468B97]-600 block w-full p-2.5">
                         </div>
                         <div class="col-span-2">
                             <label for="creator" class="block mb-2 text-sm font-medium text-gray-900">Creator</label>
@@ -57,7 +53,7 @@
                             <textarea id="description" name="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Deskripsi praktikum"></textarea>
                         </div>
                     </div>
-                    <button id="submitCreateCourse" type="submit" class="text-white inline-flex items-center bg-[#468B97] hover:bg-[#3a6f7a] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    <button id="submitCreateCourse" data-submit-loader data-loader="#loaderCreateCourse" type="submit" class="text-white inline-flex items-center bg-[#468B97] hover:bg-[#3a6f7a] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                         <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderCreateCourse"></i>
                         Simpan
                     </button>
@@ -75,7 +71,7 @@
                     <button type="button" class="flex items-center justify-between w-full p-4 bg-white text-gray-700 hover:bg-gray-50 aria-expanded:bg-[#468B97] aria-expanded:text-white" data-accordion-target="#accordion-collapse-body-{{ $course['uid'] }}" aria-expanded="false" aria-controls="accordion-collapse-body-{{ $course['uid'] }}">
                         <div class="text-left">
                             <p class="font-semibold">{{ $course['title_course'] }}</p>
-                            <p class="text-sm">Tanggal: {{ date('d-m-Y', strtotime($course['date_course']))}} | Kode: {{ $course['code_course'] }}</p>
+                            <p class="text-sm">Kode: {{ $course['code_course'] }}</p>
                         </div>
                         <div class="flex items-center gap-4">
                             <div class="flex items-center gap-1">
@@ -158,7 +154,7 @@
                             <span class="sr-only">Close modal</span>
                         </button>
                     </div>
-                    <form class="p-4 md:p-5" action="/dashboard/superadmin/courses-management/update/{{ $course['uid'] }}" method="POST">
+                    <form class="p-4 md:p-5" action="/dashboard/superadmin/course-management/update/{{ $course['uid'] }}" method="POST">
                         @csrf
                         <div class="grid gap-4 mb-4 grid-cols-2">
                             <div class="col-span-2">
@@ -168,10 +164,6 @@
                             <div class="col-span-2">
                                 <label for="title" class="block mb-2 text-sm font-medium text-gray-900">Judul</label>
                                 <input value="{{ $course['title_course'] }}" id="title" type="text" name="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97]-600 focus:border-[#468B97]-600 block w-full p-2.5" placeholder="Judul Praktikum">
-                            </div>
-                            <div class="col-span-2">
-                                <label for="date" class="block mb-2 text-sm font-medium text-gray-900">Date</label>
-                                <input value="{{ $course['date_course'] }}" id="date" type="date" name="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97]-600 focus:border-[#468B97]-600 block w-full p-2.5">
                             </div>
                             <div class="col-span-2">
                                 <label for="creator" class="block mb-2 text-sm font-medium text-gray-900">Creator</label>
@@ -186,8 +178,8 @@
                                 <textarea id="description" name="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Deskripsi praktikum">{{ $course['description_course'] }}</textarea>
                             </div>
                         </div>
-                        <button id="submitUpdateCourse" type="submit" class="text-white inline-flex items-center bg-[#468B97] hover:bg-[#3a6f7a] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                            <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderUpdateCourse"></i>
+                        <button id="submitUpdateCourse-{{ $course['uid'] }}" data-submit-loader data-loader="#loaderUpdateCourse-{{ $course['uid'] }}" type="submit" class="text-white inline-flex items-center bg-[#468B97] hover:bg-[#3a6f7a] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderUpdateCourse-{{ $course['uid'] }}"></i>
                             Update
                         </button>
                     </form>
@@ -206,7 +198,7 @@
                         <span class="sr-only">Close modal</span>
                     </button>
                     <div class="p-4 md:p-5 text-center">
-                        <form action="/dashboard/superadmin/courses-management/delete/{{ $course['uid'] }}" method="POST">
+                        <form action="/dashboard/superadmin/course-management/delete/{{ $course['uid'] }}" method="POST">
                             @csrf
                             <svg class="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -214,8 +206,8 @@
                             <h3 class="mb-5 text-sm font-normal text-gray-500">Apakah Anda yakin ingin menghapus praktikum <span class="font-semibold text-gray-900">{{ $course['title_course'] }}</span>? Tindakan ini tidak dapat dibatalkan dan akan menghapus semua pendaftaran terkait.</h3>
                             <input type="hidden" name="uid" value="{{ $course['uid'] }}">
                             <input id="title" type="text" name="title" class="my-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97]-600 focus:border-[#468B97]-600 block w-full p-2.5" placeholder="{{ $course['title_course'] }}">
-                            <button id="submitDeleteCourse" type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                                <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderDeleteCourse"></i>
+                            <button id="submitDeleteCourse-{{ $course['uid'] }}" data-submit-loader data-loader="#loaderDeleteCourse-{{ $course['uid'] }}" type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                                <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderDeleteCourse-{{ $course['uid'] }}"></i>
                                 Hapus
                             </button>
                             <button data-modal-toggle="delete-modal-{{ $course['uid'] }}" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100">Batal</button>
