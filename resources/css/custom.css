@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
+/* width */
+::-webkit-scrollbar {
+    width: 0px;
+}
+
 .turbo-progress-bar {
     background-color: #468B97 !important; /* Tailwind pink-500 */
     height: 3px !important;

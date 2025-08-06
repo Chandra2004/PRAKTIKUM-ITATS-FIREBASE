@@ -23,7 +23,7 @@ class ModuleManagementModel extends Database {
             SELECT modules.*, courses.title_course
             FROM modules
             JOIN courses ON modules.course_uid_module = courses.uid
-            ORDER BY modules.created_at DESC
+            ORDER BY modules.created_at ASC
         ");
         return $this->db->resultSet();
     }
@@ -41,10 +41,10 @@ class ModuleManagementModel extends Database {
         $this->db->query("
             SELECT COUNT(*) as count 
             FROM modules 
-            WHERE course_uid = :course AND LOWER(title) = LOWER(:title)
+            WHERE course_uid_module = :course_module AND LOWER(title_module) = LOWER(:title_module)
         ");
-        $this->db->bind(':course', $course);
-        $this->db->bind(':title', $title);
+        $this->db->bind(':course_module', $course);
+        $this->db->bind(':title_module', $title);
         $result = $this->db->single();
         if ($result && $result['count'] > 0) {
             return 'module_exists';
@@ -54,15 +54,15 @@ class ModuleManagementModel extends Database {
             INSERT INTO modules 
             (uid, course_uid_module, title_module, date_module, location_module, description_module) 
             VALUES 
-            (:uid, :course_uid, :title, :date, :location, :description)
+            (:uid, :course_uid_module, :title_module, :date_module, :location_module, :description_module)
         ");
 
         $this->db->bind(':uid', Helper::generateUUID(10));
-        $this->db->bind(':course_uid', $course);
-        $this->db->bind(':title', $title);
-        $this->db->bind(':date', $date ?: null);
-        $this->db->bind(':location', $location ?: null);
-        $this->db->bind(':description', $description ?: null);
+        $this->db->bind(':course_uid_module', $course);
+        $this->db->bind(':title_module', $title);
+        $this->db->bind(':date_module', $date);
+        $this->db->bind(':location_module', $location);
+        $this->db->bind(':description_module', $description);
         return $this->db->execute();
     }
 }

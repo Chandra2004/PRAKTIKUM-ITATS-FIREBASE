@@ -75,6 +75,9 @@
             <div class="p-6">
                 <div id="accordion-collapse" data-accordion="collapse" class="space-y-4">
                     <?php $__currentLoopData = $coursesList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $course): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php
+                            $moduleCount = count(array_filter($modulesList, fn($module) => $module['course_uid_module'] == $course['uid']));
+                        ?>
                         <div class="accordion-item border-b pb-2 border-gray-200">
                             <h2 id="accordion-collapse-heading-<?php echo e($course['uid']); ?>" class="mb-2">
                                 <button type="button" class="flex items-center justify-between w-full p-4 bg-white text-gray-700 hover:bg-gray-50 aria-expanded:bg-[#468B97] aria-expanded:text-white rounded-lg" 
@@ -84,7 +87,7 @@
                                     <div class="flex items-center gap-3">
                                         <i data-lucide="book-open" class="h-5 w-5"></i>
                                         <span class="font-headline"><?php echo e($course['title_course']); ?></span>
-                                        <span class="text-sm font-normal">(<?php echo e($course['uid']); ?> sesi)</span>
+                                        <span class="text-sm font-normal">(<?php echo e($moduleCount); ?> modul)</span>
                                     </div>
                                     <div>
                                         <i data-lucide="chevron-down" class="h-5 w-5"></i>
@@ -92,58 +95,121 @@
                                 </button>
                             </h2>
                             <div id="accordion-collapse-body-<?php echo e($course['uid']); ?>" class="hidden" aria-labelledby="accordion-collapse-heading-<?php echo e($course['uid']); ?>">
-                                <?php $__currentLoopData = $modulesList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $module): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <?php if($module['course'] === $course['title_course']): ?>
-                                        <div class="flex items-start justify-between gap-4 rounded-lg border p-4 mb-2">
+                                <?php if($moduleCount === 0): ?>
+                                    <div class="text-center">
+                                        <div class="p-4 text-gray-500 text-center">Belum ada modul untuk praktikum ini.</div>
+                                        <button data-modal-target="create-module-modal-<?php echo e($course['uid']); ?>" data-modal-toggle="create-module-modal-<?php echo e($course['uid']); ?>" type="button" class="inline-flex items-center justify-center rounded-md bg-[#468B97] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#468B97]/90">
+                                            <i data-lucide="plus-circle" class="mr-2 h-4 w-4"></i>
+                                            Tambah Modul <?php echo e($course['title_course']); ?>
+
+                                        </button>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="text-center">
+                                        <?php $__currentLoopData = $modulesList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $module): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <?php if($module['course_uid_module'] === $course['uid']): ?>
+                                                <div class="text-left flex items-start justify-between gap-4 rounded-lg border p-4 mb-2">
+                                                    <div>
+                                                        <h4 class="font-semibold"><?php echo e($module['title_module']); ?></h4>
+                                                        <div class="mt-1 flex flex-col items-start gap-x-4 gap-y-1 text-sm text-gray-500 sm:flex-row sm:items-center">
+                                                            <span class="flex items-center gap-1 5">
+                                                                <i data-lucide="calendar" class="h-4 w-4"></i>
+                                                                <?php echo e(date('d-m-Y', strtotime($module['date_module']))); ?>
+
+                                                            </span>
+                                                            <span class="flex items-center gap-1.5">
+                                                                <i data-lucide="map-pin" class="h-4 w-4"></i> <?php echo e($module['location_module']); ?>
+
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-shrink-0 gap-1">
+                                                        <button class="text-gray-500 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center" 
+                                                                data-modal-target="update-module-modal-<?php echo e($module['uid']); ?>" 
+                                                                data-modal-toggle="update-module-modal-<?php echo e($module['uid']); ?>" 
+                                                                data-schedule-id="<?php echo e($module['id']); ?>">
+                                                            <i data-lucide="edit" class="h-4 w-4"></i>
+                                                        </button>
+                                                        <button class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center" 
+                                                                data-modal-target="delete-module-modal-<?php echo e($module['uid']); ?>" 
+                                                                data-modal-toggle="delete-module-modal-<?php echo e($module['uid']); ?>" 
+                                                                data-schedule-id="<?php echo e($module['id']); ?>" 
+                                                                data-schedule-title="<?php echo e($module['title_module']); ?>">
+                                                            <i data-lucide="trash-2" class="h-4 w-4"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <button data-modal-target="create-module-modal-<?php echo e($course['uid']); ?>" data-modal-toggle="create-module-modal-<?php echo e($course['uid']); ?>" type="button" class="inline-flex items-center justify-center rounded-md bg-[#468B97] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#468B97]/90">
+                                            <i data-lucide="plus-circle" class="mr-2 h-4 w-4"></i>
+                                            Tambah Modul <?php echo e($course['title_course']); ?>
+
+                                        </button>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        
+                        <div id="create-module-modal-<?php echo e($course['uid']); ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                            <div class="relative p-4 w-full max-w-2xl max-h-full">
+                                <div class="relative bg-white rounded-lg shadow">
+                                    <form action="/dashboard/superadmin/module-management/create" method="POST">
+                                        <?php echo '<input type="hidden" name="_token" value="' . $_SESSION['csrf_token'] . '">'; ?>
+                                        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                                            <h3 class="text-xl font-semibold text-[#468B97]">Tambah Sesi Baru</h3>
+                                            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="create-module-modal-<?php echo e($course['uid']); ?>">
+                                                <i data-lucide="x" class="w-4 h-4"></i>
+                                                <span class="sr-only">Close modal</span>
+                                            </button>
+                                        </div>
+                                        <div class="p-4 md:p-5 space-y-4">
                                             <div>
-                                                <h4 class="font-semibold"><?php echo e($module['title']); ?></h4>
-                                                <div class="mt-1 flex flex-col items-start gap-x-4 gap-y-1 text-sm text-gray-500 sm:flex-row sm:items-center">
-                                                    <span class="font-medium text-gray-900"><?php echo e($module['date']); ?></span>
-                                                    <span class="flex items-center gap-1.5">
-                                                        <i data-lucide="clock" class="h-4 w-4"></i> <?php echo e($module['time']); ?>
-
-                                                    </span>
-                                                    <span class="flex items-center gap-1.5">
-                                                        <i data-lucide="map-pin" class="h-4 w-4"></i> <?php echo e($module['location']); ?>
-
-                                                    </span>
+                                                <label for="course" class="block mb-2 text-sm font-medium text-gray-900">Praktikum</label>
+                                                <select id="course" name="course" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97] focus:border-[#468B97] block w-full p-2.5">
+                                                    <option value="<?php echo e($course['uid']); ?>"><?php echo e($course['title_course']); ?></option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label for="title" class="block mb-2 text-sm font-medium text-gray-900">Judul Modul</label>
+                                                <input type="text" id="title" name="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97] focus:border-[#468B97] block w-full p-2.5" placeholder="Contoh: Modul 1: Uji Kuat Tekan">
+                                            </div>
+                                            <div class="grid grid-cols-2 md:grid-cols-2 gap-2">
+                                                <div>
+                                                    <label for="date" class="block mb-2 text-sm font-medium text-gray-900">Tanggal</label>
+                                                    <input type="date" id="date" name="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97] focus:border-[#468B97] block w-full p-2.5">
+                                                </div>
+                                                <div>
+                                                    <label for="location" class="block mb-2 text-sm font-medium text-gray-900">Lokasi</label>
+                                                    <input type="text" id="location" name="location" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97] focus:border-[#468B97] block w-full p-2.5" placeholder="Contoh: Lab. Uji Bahan Gedung A">
                                                 </div>
                                             </div>
-                                            <div class="flex flex-shrink-0 gap-1">
-                                                <button class="text-gray-500 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center" 
-                                                        data-modal-target="modal-edit-module-<?php echo e($module['uid']); ?>" 
-                                                        data-modal-toggle="modal-edit-module-<?php echo e($module['uid']); ?>" 
-                                                        data-schedule-id="<?php echo e($module['id']); ?>">
-                                                    <i data-lucide="edit" class="h-4 w-4"></i>
-                                                </button>
-                                                <button class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center" 
-                                                        data-modal-target="deleteModal" 
-                                                        data-modal-toggle="deleteModal" 
-                                                        data-schedule-id="<?php echo e($module['id']); ?>" 
-                                                        data-schedule-title="<?php echo e($module['title']); ?>">
-                                                    <i data-lucide="trash-2" class="h-4 w-4"></i>
-                                                </button>
+                                            <div class="col-span-2">
+                                                <label for="description" class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
+                                                <textarea id="description" name="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Deskripsi modul"></textarea>
                                             </div>
                                         </div>
-                                    <?php endif; ?>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b">
+                                            <button type="button" data-modal-hide="create-module-modal-<?php echo e($course['uid']); ?>" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">Batal</button>
+                                            <button id="submitCreateModule-<?php echo e($course['uid']); ?>" data-submit-loader data-loader="#loaderCreateModule-<?php echo e($course['uid']); ?>" type="submit" class="flex items-center justify-center gap-2 ms-3 text-white bg-[#468B97] hover:bg-[#468B97]/90 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" aria-label="Simpan sesi baru">
+                                                <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderCreateModule-<?php echo e($course['uid']); ?>" aria-hidden="true"></i>
+                                                Simpan
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    
-
-
-
-
-
-
-
-
-                    
                 </div>
             </div>
         </div>
     </div>
+
+    <?php $__currentLoopData = $modulesList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $module): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
