@@ -65,4 +65,69 @@ class ModuleManagementModel extends Database {
         $this->db->bind(':description_module', $description);
         return $this->db->execute();
     }
+
+    public function ModuleUpdate($uid, $course, $title, $date, $location, $description) {
+        // Validasi input
+        if (empty($uid) || empty($course) || empty($title) || empty($date) || empty($location) || empty($description)) {
+            return 'required_fields_missing';
+        }
+        if (!empty($date) && !DateTime::createFromFormat('Y-m-d', $date)) {
+            return 'invalid_date_format';
+        }
+
+        // Cek apakah modul dengan course dan title sudah ada (case-insensitive, selain modul yang diupdate)
+        $this->db->query("
+            SELECT COUNT(*) as count 
+            FROM modules 
+            WHERE course_uid_module = :course_module AND LOWER(title_module) = LOWER(:title_module) AND uid != :uid
+        ");
+        $this->db->bind(':course_module', $course);
+        $this->db->bind(':title_module', $title);
+        $this->db->bind(':uid', $uid);
+        $result = $this->db->single();
+        if ($result && $result['count'] > 0) {
+            return 'module_exists';
+        }
+
+        $this->db->query("
+            UPDATE modules 
+            SET course_uid_module = :course_uid_module,
+                title_module = :title_module,
+                date_module = :date_module,
+                location_module = :location_module,
+                description_module = :description_module
+            WHERE uid = :uid
+        ");
+        $this->db->bind(':uid', $uid);
+        $this->db->bind(':course_uid_module', $course);
+        $this->db->bind(':title_module', $title);
+        $this->db->bind(':date_module', $date);
+        $this->db->bind(':location_module', $location);
+        $this->db->bind(':description_module', $description);
+        return $this->db->execute();
+    }
+
+    public function ModuleDelete($uid) {
+        if (empty($uid)) {
+            return 'module_not_found';
+        }
+
+        $this->db->query("
+            SELECT COUNT(*) as count 
+            FROM modules 
+            WHERE uid = :uid
+        ");
+        $this->db->bind(':uid', $uid);
+        $result = $this->db->single();
+        if ($result && $result['count'] == 0) {
+            return 'module_not_found';
+        }
+
+        $this->db->query("
+            DELETE FROM modules 
+            WHERE uid = :uid
+        ");
+        $this->db->bind(':uid', $uid);
+        return $this->db->execute();
+    }
 }

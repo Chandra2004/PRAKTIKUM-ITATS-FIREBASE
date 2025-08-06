@@ -71,7 +71,7 @@ class ModuleManagementController {
                 $errorMessages = [
                     'required_fields_missing' => 'Praktikum dan judul modul wajib diisi',
                     'invalid_date_format' => 'Format tanggal tidak valid',
-                    'module_exists' => 'Modul dengan judul tersebut sudah ada untuk praktikum ini (tidak peka terhadap huruf besar/kecil)',
+                    'module_exists' => 'Modul dengan judul tersebut sudah ada untuk praktikum ini',
                     false => 'Gagal menambahkan modul',
                 ];
     
@@ -85,5 +85,75 @@ class ModuleManagementController {
             }
         }
 
+    }
+
+    public function ModuleUpdate($uid) {
+        if (Helper::is_post() && Helper::is_csrf()) {
+            $course = filter_input(INPUT_POST, 'course', FILTER_SANITIZE_SPECIAL_CHARS) ?? '';
+            $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_SPECIAL_CHARS) ?? '';
+            $date = filter_input(INPUT_POST, 'date', FILTER_SANITIZE_SPECIAL_CHARS) ?? '';
+            $location = filter_input(INPUT_POST, 'location', FILTER_SANITIZE_SPECIAL_CHARS) ?? '';
+            $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_SPECIAL_CHARS) ?? '';
+    
+            if (empty($uid) || empty($course) || empty($title) || empty($date) || empty($location) || empty($description)) {
+                return Helper::redirect('/dashboard/superadmin/module-management', 'error', 'All fields must be filled');
+            }
+
+            try {
+                if (!empty($date) && !DateTime::createFromFormat('Y-m-d', $date)) {
+                    return Helper::redirect('/dashboard/superadmin/module-management', 'error', 'Format tanggal tidak valid');
+                }
+    
+                $result = $this->ModuleManagementModel->ModuleUpdate(
+                    $uid,
+                    $course,
+                    $title,
+                    $date,
+                    $location,
+                    $description
+                );
+    
+                $errorMessages = [
+                    'required_fields_missing' => 'Praktikum dan judul modul wajib diisi',
+                    'invalid_date_format' => 'Format tanggal tidak valid',
+                    'module_exists' => 'Modul dengan judul tersebut sudah ada untuk praktikum ini',
+                    'module_not_found' => 'Modul tidak ditemukan',
+                    false => 'Gagal memperbarui modul',
+                ];
+    
+                if (isset($errorMessages[$result])) {
+                    return Helper::redirect('/dashboard/superadmin/module-management', 'error', $errorMessages[$result]);
+                }
+    
+                return Helper::redirect('/dashboard/superadmin/module-management', 'success', 'Modul berhasil diperbarui');
+            } catch (Exception $e) {
+                return Helper::redirect('/dashboard/superadmin/module-management', 'error', 'Error: ' . $e->getMessage());
+            }
+        }
+    }
+
+    public function ModuleDelete($uid) {
+        if (Helper::is_post() && Helper::is_csrf()) {
+            if (empty($uid)) {
+                return Helper::redirect('/dashboard/superadmin/module-management', 'error', 'ID modul tidak valid');
+            }
+
+            try {
+                $result = $this->ModuleManagementModel->ModuleDelete($uid);
+    
+                $errorMessages = [
+                    'module_not_found' => 'Modul tidak ditemukan',
+                    false => 'Gagal menghapus modul',
+                ];
+    
+                if (isset($errorMessages[$result])) {
+                    return Helper::redirect('/dashboard/superadmin/module-management', 'error', $errorMessages[$result]);
+                }
+    
+                return Helper::redirect('/dashboard/superadmin/module-management', 'success', 'Modul berhasil dihapus');
+            } catch (Exception $e) {
+                return Helper::redirect('/dashboard/superadmin/module-management', 'error', 'Error: ' . $e->getMessage());
+            }
+        }
     }
 }
