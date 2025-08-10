@@ -23,7 +23,7 @@ class SessionManagementModel extends Database {
         SELECT sessions.*, courses.title_course
         FROM sessions
         JOIN courses ON sessions.course_uid_session = courses.uid
-        ORDER BY sessions.created_at DESC
+        ORDER BY sessions.created_at ASC
         ");
         return $this->db->resultSet();
     }

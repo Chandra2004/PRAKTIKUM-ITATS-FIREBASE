@@ -20,7 +20,8 @@ class ModuleManagementModel extends Database {
 
     public function GetAllModules() {
         $this->db->query("
-            SELECT modules.*, courses.title_course
+            SELECT modules.*, 
+            courses.title_course AS course_title
             FROM modules
             JOIN courses ON modules.course_uid_module = courses.uid
             ORDER BY modules.created_at ASC

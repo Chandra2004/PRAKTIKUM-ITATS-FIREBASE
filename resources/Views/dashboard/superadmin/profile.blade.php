@@ -2,7 +2,7 @@
 @section('dashboard-content')
 <main class="p-4 sm:p-6">
 
-    {{-- Skeleton Profile --}}
+    {{-- SKELETON PROFILE --}}
     <div id="profile-content-skeleton">
         <div class="mb-8">
             <h1 class="text-2xl font-headline font-bold text-[#468B97]">Profil Saya</h1>
@@ -70,7 +70,7 @@
         </div>
     </div>
 
-    {{-- Real Profile --}}
+    {{-- PROFILE --}}
     <div id="profile-content" class="hidden">
         <div class="mb-8">
             <h1 class="text-2xl font-headline font-bold text-[#468B97]">Profil Saya</h1>
@@ -82,7 +82,7 @@
                     <div class="p-6 border-b">
                         <h2 class="font-headline text-lg font-bold text-[#468B97]">Foto Profil</h2>
                     </div>
-                    <form id="formPhoto" action="/dashboard/superadmin/profile/update/photo" method="POST" enctype="multipart/form-data">
+                    <form id="formPhoto" action="/dashboard/superadmin/profile/update/photo/{{ $uid }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="p-6 flex flex-col items-center gap-4">
                             <label for="avatarInput" class="relative w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer" id="avatar-container">
@@ -102,8 +102,8 @@
 
                             <input type="file" id="avatarInput" name="avatar" class="hidden" accept="image/*" />
 
-                            <button type="submit" id="submitPhoto" name="UpdatePhoto" class="flex gap-1 items-center justify-center text-white bg-[#468B97] px-4 py-2 rounded-md hover:bg-[#468B97]/20 hover:text-[#468B97] border border-[#468B97] hover:border-[#468B97] hidden">
-                                <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderPhoto"></i>
+                            <button type="submit" id="submitUpdatePhoto" data-submit-loader data-loader="#loaderUpdatePhoto" class="flex gap-1 items-center justify-center text-white bg-[#468B97] px-4 py-2 rounded-md hover:bg-[#468B97]/20 hover:text-[#468B97] border border-[#468B97] hover:border-[#468B97]">
+                                <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderUpdatePhoto"></i>
                                 Update Foto Profil
                             </button>
                         </div>
@@ -116,7 +116,7 @@
                         <h2 class="font-headline text-lg font-bold text-[#468B97]">Informasi Data Diri</h2>
                     </div>
                     <div class="p-6">
-                        <form data-spa action="/dashboard/superadmin/profile/update/data" method="POST" class="space-y-8 px-4">
+                        <form data-spa action="/dashboard/superadmin/profile/update/data/{{ $uid }}" method="POST" class="space-y-8 px-4">
                             @csrf
                             <div class="space-y-2">
                                 <label for="name" class="block text-sm font-medium text-[#468B97]">Nama Lengkap</label>

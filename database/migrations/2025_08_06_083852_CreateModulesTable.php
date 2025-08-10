@@ -15,7 +15,7 @@ class Migration_2025_08_06_083852_CreateModulesTable
             $table->string('title_module');
             $table->string('location_module');
             $table->string('date_module');
-            $table->string('description_module');
+            $table->text('description_module');
             
             $table->timestamps();
 

@@ -8,22 +8,35 @@ use ITATS\PraktikumTeknikSipil\Helpers\Helper;
 use Exception;
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\DashboardController;
 use ITATS\PraktikumTeknikSipil\Models\Dashboard\SuperAdmin\CourseManagementModel;
+use ITATS\PraktikumTeknikSipil\Models\Dashboard\SuperAdmin\ModuleManagementModel;
+use ITATS\PraktikumTeknikSipil\Models\Dashboard\SuperAdmin\SessionManagementModel;
 
 class CourseManagementController {
     private $dashboardController;
     private $linkDashboard;
     private $CourseManagementModel;
+    private $SessionManagementModel;
+    private $ModuleManagementModel;
 
     public function __construct() {
         $this->dashboardController = new DashboardController();
         $this->linkDashboard = $this->dashboardController->LinkDashboard();
         $this->CourseManagementModel = new CourseManagementModel();
+        $this->SessionManagementModel = new SessionManagementModel();
+        $this->ModuleManagementModel = new ModuleManagementModel();
     }
 
     public function Index() {
         $notification = Helper::get_flash('notification');
 
-        View::render('dashboard.superadmin.courses', [
+        $page = '';
+        if($_SESSION['user']['role_name'] == 'SuperAdmin') {
+            $page = 'dashboard.superadmin.course';
+        } else if($_SESSION['user']['role_name'] == 'Praktikan') {
+            $page = 'dashboard.praktikan.course';
+        }
+
+        View::render($page, [
             'title' => 'Courses Management | Praktikum Teknik Sipil ITATS',
             'notification' => $notification,
             'link' => $this->linkDashboard,
@@ -37,6 +50,8 @@ class CourseManagementController {
 
             'userSuperAdmins' => $this->CourseManagementModel->GetSuperAdmins(),
             'coursesList' => $this->CourseManagementModel->GetAllCourses(),
+            'sessionsList' => $this->SessionManagementModel->GetAllSessions(),
+            'modulesList' => $this->ModuleManagementModel->GetAllModules(),
         ]);
     }
 

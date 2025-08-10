@@ -102,22 +102,22 @@
                 </div>
                 <div class="p-4">
                     <div class="text-2xl font-bold">5</div>
-                    <a href="/dashboard/superadmin/courses-management" class="inline-flex items-center pt-4 text-sm text-[#468B97] hover:text-[#FEE500]">
+                    <a href="/dashboard/superadmin/course-management" class="inline-flex items-center pt-4 text-sm text-[#468B97] hover:text-[#FEE500]">
                         Kelola Praktikum
                         <i data-lucide="arrow-right" class="ml-2 h-4 w-4"></i>
                     </a>
                 </div>
             </div>
-            <!-- Card: Jadwal Global -->
+            <!-- Card: Jadwal Modul -->
             <div class="bg-white rounded-lg shadow">
                 <div class="flex flex-row items-center justify-between p-4 space-y-0 pb-2">
-                    <h3 class="text-sm font-medium">Jadwal Global</h3>
+                    <h3 class="text-sm font-medium">Jadwal Modul</h3>
                     <i data-lucide="calendar-clock" class="h-6 w-6 text-gray-500"></i>
                 </div>
                 <div class="p-4">
                     <div class="text-2xl font-bold">Atur</div>
-                    <a href="/dashboard/superadmin/schedule-management" class="inline-flex items-center pt-4 text-sm text-[#468B97] hover:text-[#FEE500]">
-                        Atur Jadwal
+                    <a href="/dashboard/superadmin/module-management" class="inline-flex items-center pt-4 text-sm text-[#468B97] hover:text-[#FEE500]">
+                        Atur Modul
                         <i data-lucide="arrow-right" class="ml-2 h-4 w-4"></i>
                     </a>
                 </div>

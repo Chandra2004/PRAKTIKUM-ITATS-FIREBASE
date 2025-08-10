@@ -104,56 +104,126 @@
                             </h2>
                             <div id="accordion-collapse-body-{{ $course['uid'] }}" class="hidden" aria-labelledby="accordion-collapse-heading-{{ $course['uid'] }}">
                                 @if($sessionCount === 0)
-                                    <div class="p-4 text-gray-500 text-center">Belum ada sesi untuk praktikum ini.</div>
+                                    <div class="text-center">
+                                        <div class="p-4 text-gray-500 text-center">Belum ada Sesi untuk praktikum ini.</div>
+                                        <button data-modal-target="create-session-modal-{{ $course['uid'] }}" data-modal-toggle="create-session-modal-{{ $course['uid'] }}" type="button" class="inline-flex items-center justify-center rounded-md bg-[#468B97] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#468B97]/90">
+                                            <i data-lucide="plus-circle" class="mr-2 h-4 w-4"></i>
+                                            Tambah Sesi {{ $course['title_course'] }}
+                                        </button>
+                                    </div>
                                 @else
-                                    @foreach($sessionsList as $session)
-                                        @if($course['uid'] == $session['course_uid_session'])
-                                            @php
-                                                $isActive = strtotime($session['deadline_session']) > time();
-                                            @endphp
-                                            <div class="flex items-start justify-between gap-4 rounded-lg border p-4 mb-2">
-                                                <div>
-                                                    <h4 class="font-semibold">{{ $session['title_session'] }}</h4>
-                                                    <div class="mt-1 flex flex-col items-start gap-x-4 gap-y-1 text-sm text-gray-500 sm:flex-row sm:items-center">
-                                                        <span class="flex items-center gap-1.5">
-                                                            <i data-lucide="calendar-clock" class="h-4 w-4" aria-hidden="true"></i>
-                                                            {{ date('H:i d-m-Y', strtotime($session['deadline_session'])) }}
-                                                        </span>
-                                                        <span class="flex items-center gap-1.5">
-                                                            <i data-lucide="clock" class="h-4 w-4" aria-hidden="true"></i>
-                                                            {{ $session['time_start_session'] . ' - ' . $session['time_end_session'] }}
-                                                        </span>
-                                                        <span class="flex items-center gap-1.5">
-                                                            <i data-lucide="users" class="h-4 w-4" aria-hidden="true"></i>
-                                                            Kuota: {{ $session['kuota_session'] }}
-                                                        </span>
-                                                        <span class="flex items-center gap-1.5">
-                                                            <i data-lucide="check-circle" class="h-4 w-4 {{ $isActive ? 'text-green-500' : 'text-red-500' }}" aria-hidden="true"></i>
-                                                            Status: {{ $isActive ? 'Aktif' : 'Kadaluarsa' }}
-                                                        </span>
+                                    <div class="text-center">
+                                        @foreach($sessionsList as $session)
+                                            @if($course['uid'] == $session['course_uid_session'])
+                                                @php
+                                                    $isActive = strtotime($session['deadline_session']) > time();
+                                                @endphp
+                                                <div class="text-left flex items-start justify-between gap-4 rounded-lg border p-4 mb-2">
+                                                    <div>
+                                                        <h4 class="font-semibold">{{ $session['title_session'] }}</h4>
+                                                        <div class="mt-1 flex flex-col items-start gap-x-4 gap-y-1 text-sm text-gray-500 sm:flex-row sm:items-center">
+                                                            <span class="flex items-center gap-1.5">
+                                                                <i data-lucide="calendar-clock" class="h-4 w-4" aria-hidden="true"></i>
+                                                                {{ date('H:i d-m-Y', strtotime($session['deadline_session'])) }}
+                                                            </span>
+                                                            <span class="flex items-center gap-1.5">
+                                                                <i data-lucide="clock" class="h-4 w-4" aria-hidden="true"></i>
+                                                                {{ $session['time_start_session'] . ' - ' . $session['time_end_session'] }}
+                                                            </span>
+                                                            <span class="flex items-center gap-1.5">
+                                                                <i data-lucide="users" class="h-4 w-4" aria-hidden="true"></i>
+                                                                Kuota: {{ $session['kuota_session'] }}
+                                                            </span>
+                                                            <span class="flex items-center gap-1.5">
+                                                                <i data-lucide="check-circle" class="h-4 w-4 {{ $isActive ? 'text-green-500' : 'text-red-500' }}" aria-hidden="true"></i>
+                                                                Status: {{ $isActive ? 'Aktif' : 'Kadaluarsa' }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-shrink-0 gap-1">
+                                                        <button class="text-gray-500 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center" 
+                                                                data-modal-target="modal-edit-session-{{ $session['uid'] }}" 
+                                                                data-modal-toggle="modal-edit-session-{{ $session['uid'] }}" 
+                                                                data-session-id="{{ $session['id'] }}"
+                                                                aria-label="Edit sesi {{ $session['title_session'] }}">
+                                                            <i data-lucide="edit" class="h-4 w-4" aria-hidden="true"></i>
+                                                        </button>
+                                                        <button class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center" 
+                                                                data-modal-target="delete-session-modal-{{ $session['uid'] }}" 
+                                                                data-modal-toggle="delete-session-modal-{{ $session['uid'] }}" 
+                                                                data-session-id="{{ $session['id'] }}" 
+                                                                data-session-title="{{ $session['title_session'] }}"
+                                                                aria-label="Hapus sesi {{ $session['title_session'] }}">
+                                                            <i data-lucide="trash-2" class="h-4 w-4" aria-hidden="true"></i>
+                                                        </button>
                                                     </div>
                                                 </div>
-                                                <div class="flex flex-shrink-0 gap-1">
-                                                    <button class="text-gray-500 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center" 
-                                                            data-modal-target="modal-edit-session-{{ $session['uid'] }}" 
-                                                            data-modal-toggle="modal-edit-session-{{ $session['uid'] }}" 
-                                                            data-session-id="{{ $session['id'] }}"
-                                                            aria-label="Edit sesi {{ $session['title_session'] }}">
-                                                        <i data-lucide="edit" class="h-4 w-4" aria-hidden="true"></i>
-                                                    </button>
-                                                    <button class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm p-2 text-center inline-flex items-center" 
-                                                            data-modal-target="delete-session-modal-{{ $session['uid'] }}" 
-                                                            data-modal-toggle="delete-session-modal-{{ $session['uid'] }}" 
-                                                            data-session-id="{{ $session['id'] }}" 
-                                                            data-session-title="{{ $session['title_session'] }}"
-                                                            aria-label="Hapus sesi {{ $session['title_session'] }}">
-                                                        <i data-lucide="trash-2" class="h-4 w-4" aria-hidden="true"></i>
-                                                    </button>
+                                            @endif
+                                        @endforeach
+                                        <button data-modal-target="create-session-modal-{{ $course['uid'] }}" data-modal-toggle="create-session-modal-{{ $course['uid'] }}" type="button" class="inline-flex items-center justify-center rounded-md bg-[#468B97] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#468B97]/90">
+                                            <i data-lucide="plus-circle" class="mr-2 h-4 w-4"></i>
+                                            Tambah Sesi {{ $course['title_course'] }}
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- ADD SESSION MODAL ON LIST --}}
+                        <div id="create-session-modal-{{ $course['uid'] }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                            <div class="relative p-4 w-full max-w-2xl max-h-full">
+                                <div class="relative bg-white rounded-lg shadow">
+                                    <form action="/dashboard/superadmin/session-management/create" method="POST" id="create-session-form">
+                                        @csrf
+                                        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                                            <h3 class="text-xl font-semibold text-[#468B97]">Tambah Sesi Baru</h3>
+                                            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="create-session-modal-{{ $course['uid'] }}" aria-label="Tutup modal">
+                                                <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
+                                                <span class="sr-only">Tutup modal</span>
+                                            </button>
+                                        </div>
+                                        <div class="p-4 md:p-5 space-y-4">
+                                            <div>
+                                                <label for="course" class="block mb-2 text-sm font-medium text-gray-900">Praktikum</label>
+                                                <select id="course" name="course" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97] focus:border-[#468B97] block w-full p-2.5" required>
+                                                    <option disabled>Pilih praktikum</option>
+                                                    <option value="{{ $course['uid'] }}">{{ $course['title_course'] }}</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label for="title" class="block mb-2 text-sm font-medium text-gray-900">Judul Sesi</label>
+                                                <input type="text" id="title" name="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97] focus:border-[#468B97] block w-full p-2.5" placeholder="Contoh: Sesi Pagi/Siang/Sore/Malam" required>
+                                            </div>
+                                            <div class="grid grid-cols-2 md:grid-cols-2 gap-2">
+                                                <div>
+                                                    <label for="waktuMulai" class="block mb-2 text-sm font-medium text-gray-900">Waktu Mulai</label>
+                                                    <input type="time" id="waktuMulai" name="timeStart" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97] focus:border-[#468B97] block w-full p-2.5" required>
+                                                </div>
+                                                <div>
+                                                    <label for="waktuSelesai" class="block mb-2 text-sm font-medium text-gray-900">Waktu Selesai</label>
+                                                    <input type="time" id="waktuSelesai" name="timeEnd" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97] focus:border-[#468B97] block w-full p-2.5" required>
                                                 </div>
                                             </div>
-                                        @endif
-                                    @endforeach
-                                @endif
+                                            <div class="grid grid-cols-2 md:grid-cols-2 gap-2">
+                                                <div>
+                                                    <label for="kuota" class="block mb-2 text-sm font-medium text-gray-900">Kuota</label>
+                                                    <input type="number" id="kuota" name="kuota" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97] focus:border-[#468B97] block w-full p-2.5" placeholder="Contoh: 20" min="1" required>
+                                                </div>
+                                                <div>
+                                                    <label for="addDate" class="block mb-2 text-sm font-medium text-gray-900">Deadline Sesi</label>
+                                                    <input type="datetime-local" id="addDate" name="deadline" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#468B97] focus:border-[#468B97] block w-full p-2.5" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b">
+                                            <button type="button" data-modal-hide="create-session-modal-{{ $course['uid'] }}" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10" aria-label="Batalkan pembuatan sesi">Batal</button>
+                                            <button id="submitCreateSession" data-submit-loader data-loader="#loaderCreateSession" type="submit" class="flex items-center justify-center gap-2 ms-3 text-white bg-[#468B97] hover:bg-[#468B97]/90 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" aria-label="Simpan sesi baru">
+                                                <i data-lucide="loader-2" class="h-4 w-4 mr-2 hidden animate-spin" id="loaderCreateSession" aria-hidden="true"></i>
+                                                Simpan
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     @endforeach

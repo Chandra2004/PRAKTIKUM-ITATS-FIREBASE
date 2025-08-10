@@ -172,9 +172,9 @@ class UserManagementModel extends Database {
 
         $this->db->query("
             INSERT INTO users (
-                uid, full_name, phone, email, password, npm_nip, role_uid, initials, status
+                uid, full_name, phone, email, password, npm_nip, posisi, role_uid, initials, status
             ) VALUES (
-                :uid, :full_name, :phone, :email, :password, :npm_nip, :role_uid, :initials, :status
+                :uid, :full_name, :phone, :email, :password, :npm_nip, :posisi, :role_uid, :initials, :status
             )
         ");
         $this->db->bind(':uid', Helper::generateUUID(10));
@@ -183,6 +183,7 @@ class UserManagementModel extends Database {
         $this->db->bind(':email', $emailMahasiswa);
         $this->db->bind(':password', $passwordMahasiswa);
         $this->db->bind(':npm_nip', $npmMahasiswa);
+        $this->db->bind(':posisi', (empty($roleName) ? 'Praktikan' : $roleName));
         $this->db->bind(':role_uid', $role);
         $this->db->bind(':initials', $initials);
         $this->db->bind(':status', '1');

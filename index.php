@@ -25,6 +25,8 @@ use ITATS\PraktikumTeknikSipil\Http\Controllers\News\NewsController;
 
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Auth\RegisterController;
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Auth\LoginController;
+use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\Praktikan\HomePraktikanController;
+use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\Praktikan\ProfilePraktikanController;
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\CourseManagementController;
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\HomeSuperAdminController;
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\ModuleManagementController;
@@ -32,7 +34,6 @@ use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\PaymentMana
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\ProfileSuperAdminController;
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\SessionManagementController;
 use ITATS\PraktikumTeknikSipil\Http\Controllers\Dashboard\SuperAdmin\UserManagementController;
-
 
 SessionManager::startSecureSession();
 Config::loadEnv();
@@ -83,11 +84,11 @@ Router::add('POST', '/register/auth', RegisterController::class, 'RegisterUser',
     // ]);
 
     // PRAKTIKAN
-    // Router::add('GET', '/dashboard/praktikan', HomePraktikanController::class, 'Index', [
-    //     AuthMiddleware::class,
-    //     WAFMiddleware::class,
-    //     [RoleMiddleware::class, ['Praktikan']]
-    // ]);
+    Router::add('GET', '/dashboard/praktikan', HomePraktikanController::class, 'Index', [
+        AuthMiddleware::class,
+        WAFMiddleware::class,
+        [RoleMiddleware::class, ['Praktikan']]
+    ]);
 
 // MENU SUPER ADMIN
     // USER-MANAGEMENT
@@ -258,137 +259,60 @@ Router::add('POST', '/register/auth', RegisterController::class, 'RegisterUser',
             [RoleMiddleware::class, ['SuperAdmin']]
         ]);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // PROFILE SUPER ADMIN
-// Router::add('GET', '/dashboard/superadmin/profile', ProfileSuperAdminController::class, 'Index', [
-//     AuthMiddleware::class,
-//     WAFMiddleware::class,
-//     [RoleMiddleware::class, ['SuperAdmin']]
-// ]);
-
-// Router::add('POST', '/dashboard/superadmin/profile/update/photo', ProfileSuperAdminController::class, 'UpdatePhoto', [
-//     WAFMiddleware::class,
-//     AuthMiddleware::class,
-//     CsrfMiddleware::class,
-//     [RoleMiddleware::class, ['SuperAdmin']]
-// ]);
-
-// Router::add('POST', '/dashboard/superadmin/profile/update/data', ProfileSuperAdminController::class, 'UpdateData', [
-//     CsrfMiddleware::class,
-//     AuthMiddleware::class,
-//     WAFMiddleware::class,
-//     [RoleMiddleware::class, ['SuperAdmin']]
-// ]);
+    // PROFILE SUPERADMIN
+    Router::add('GET', '/dashboard/superadmin/profile', ProfileSuperAdminController::class, 'Index', [
+        AuthMiddleware::class,
+        WAFMiddleware::class,
+        [RoleMiddleware::class, ['SuperAdmin']]
+    ]);
+
+        // UPDATE PHOTO
+        Router::add('POST', '/dashboard/superadmin/profile/update/photo/{uid}', ProfileSuperAdminController::class, 'UpdatePhoto', [
+            WAFMiddleware::class,
+            AuthMiddleware::class,
+            CsrfMiddleware::class,
+            [RoleMiddleware::class, ['SuperAdmin']]
+        ]);
+
+        // UPDATE DATA
+        Router::add('POST', '/dashboard/superadmin/profile/update/data/{uid}', ProfileSuperAdminController::class, 'UpdateData', [
+            CsrfMiddleware::class,
+            AuthMiddleware::class,
+            WAFMiddleware::class,
+            [RoleMiddleware::class, ['SuperAdmin']]
+        ]);
+// END MENU SUPER ADMIN
+
+// MENU PRAKTIKAN
+    // PROFILE PRAKTIKAN
+    Router::add('GET', '/dashboard/praktikan/profile', ProfilePraktikanController::class, 'Index', [
+        AuthMiddleware::class,
+        WAFMiddleware::class,
+        [RoleMiddleware::class, ['Praktikan']]
+    ]);
+
+        // UPDATE PHOTO
+        Router::add('POST', '/dashboard/praktikan/profile/update/photo/{uid}', ProfilePraktikanController::class, 'UpdatePhoto', [
+            WAFMiddleware::class,
+            AuthMiddleware::class,
+            CsrfMiddleware::class,
+            [RoleMiddleware::class, ['Praktikan']]
+        ]);
+
+        // UPDATE DATA
+        Router::add('POST', '/dashboard/praktikan/profile/update/data/{uid}', ProfilePraktikanController::class, 'UpdateData', [
+            CsrfMiddleware::class,
+            AuthMiddleware::class,
+            WAFMiddleware::class,
+            [RoleMiddleware::class, ['Praktikan']]
+        ]);
+
+    // COURSE-MANAGEMENT
+    Router::add('GET', '/dashboard/praktikan/course-management', CourseManagementController::class, 'Index', [
+        AuthMiddleware::class,
+        WAFMiddleware::class,
+        [RoleMiddleware::class, ['Praktikan']]
+    ]);
 
 
 // LOGOUT USER

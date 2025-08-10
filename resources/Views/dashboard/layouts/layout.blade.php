@@ -75,6 +75,25 @@
                                     <span class="ml-3">Modul</span>
                                 </a>
                             </li>
+                            @elseif($roleName == 'Praktikan')
+                                <li>
+                                    <a href="{{ $link }}/module-management" class="{{ request()->is($link . '/module-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900' }} flex items-center py-3 px-5 rounded-lg">
+                                        <i data-lucide="credit-card" class="w-5 h-5"></i>
+                                        <span class="ml-3">Pembayaran</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ $link }}/course-management" class="{{ request()->is($link . '/course-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900' }} flex items-center py-3 px-5 rounded-lg">
+                                        <i data-lucide="book-open" class="w-5 h-5"></i>
+                                        <span class="ml-3">Praktikum</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ $link }}/module-management" class="{{ request()->is($link . '/module-management') ? 'bg-[#468B97] text-white' : 'hover:bg-[#E0E8E9] text-gray-900' }} flex items-center py-3 px-5 rounded-lg">
+                                        <i data-lucide="id-card" class="w-5 h-5"></i>
+                                        <span class="ml-3">Kartu Praktikum</span>
+                                    </a>
+                                </li>
                             @endif
                         </ul>
                     </div>

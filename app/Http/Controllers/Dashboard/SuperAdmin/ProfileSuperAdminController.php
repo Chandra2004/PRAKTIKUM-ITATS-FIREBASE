@@ -45,9 +45,10 @@ class ProfileSuperAdminController {
         $notification = Helper::get_flash('notification');
 
         View::render('dashboard.superadmin.profile', [
-            'title' => 'Payment Management | Praktikum Teknik Sipil ITATS',
             'notification' => $notification,
+            'title' => 'My Profile | Praktikum Teknik Sipil ITATS',
             'link' => $this->linkDashboard,
+
             'id' => $_SESSION['user']['id'],
             'uid' => $_SESSION['user']['uid'],
             'profilePicture' => $_SESSION['user']['profile_picture'],
@@ -67,34 +68,31 @@ class ProfileSuperAdminController {
         ]);
     }
 
-    public function UpdatePhoto() {
-        if (!Helper::is_post() && !isset($_POST['_token'])) {
-            return Helper::redirect('/dashboard/superadmin/profile', 'error', 'Invalid request method.');
-        }
-        
-        $uid = $_SESSION['user']['uid'];
-        if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] === UPLOAD_ERR_INI_SIZE) {
-            return Helper::redirect('/dashboard/superadmin/profile', 'error', 'Ukuran file terlalu besar. Maksimal 2MB.');
-        }
-
-        $newPicture = $_FILES['avatar'];
-        if (!$newPicture || $newPicture['error'] !== UPLOAD_ERR_OK) {
-            return Helper::redirect('/dashboard/superadmin/profile', 'error', 'Tidak ada file yang diunggah atau file rusak.');
-        }
-
-        $fileName = $this->processImage($newPicture, $uid);
-        if ($fileName instanceof Exception) {
-            return Helper::redirect('/dashboard/superadmin/profile', 'error', 'Update photo gagal: ' . $fileName->getMessage());
-        }
-
-        try {
-            $this->ProfileModel->UpdatePhoto($uid, $fileName);
-            $_SESSION['user']['profile_picture'] = $fileName;
-            return Helper::redirect('/dashboard/superadmin/profile', 'success', 'Foto profil berhasil diperbarui', 0, [
-                'profile_picture_url' => Helper::url('/file.php?file=user-pictures/' . $fileName)
-            ]);
-        } catch (Exception $e) {
-            return Helper::redirect('/dashboard/superadmin/profile', 'error', 'Gagal update DB: ' . $e->getMessage());
+    public function UpdatePhoto($uid) {
+        if (Helper::is_post() && Helper::is_csrf()) {
+            if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] === UPLOAD_ERR_INI_SIZE) {
+                return Helper::redirect('/dashboard/superadmin/profile', 'error', 'Ukuran file terlalu besar. Maksimal 2MB.');
+            }
+    
+            $newPicture = $_FILES['avatar'];
+            if (!$newPicture || $newPicture['error'] !== UPLOAD_ERR_OK) {
+                return Helper::redirect('/dashboard/superadmin/profile', 'error', 'Tidak ada file yang diunggah atau file rusak.');
+            }
+    
+            $fileName = $this->processImage($newPicture, $uid);
+            if ($fileName instanceof Exception) {
+                return Helper::redirect('/dashboard/superadmin/profile', 'error', 'Update photo gagal: ' . $fileName->getMessage());
+            }
+    
+            try {
+                $this->ProfileModel->UpdatePhoto($uid, $fileName);
+                $_SESSION['user']['profile_picture'] = $fileName;
+                return Helper::redirect('/dashboard/superadmin/profile', 'success', 'Foto profil berhasil diperbarui', 0, [
+                    'profile_picture_url' => Helper::url('/file.php?file=user-pictures/' . $fileName)
+                ]);
+            } catch (Exception $e) {
+                return Helper::redirect('/dashboard/superadmin/profile', 'error', 'Gagal update DB: ' . $e->getMessage());
+            }
         }
     }
 
@@ -182,42 +180,40 @@ class ProfileSuperAdminController {
         }
     }
 
-    public function UpdateData() {
-        if (!Helper::is_post() && !isset($_POST['_token']) && !isset($_POST['UpdateData'])) {
-            return Helper::redirect('/dashboard/superadmin/profile', 'error', 'Invalid request method.', 0, [
-                'fullName' => $_POST['name'] ?? '',
-                'email' => $_POST['email'] ?? ''
-            ]);
+    public function UpdateData($uid) {
+        if (Helper::is_post() && Helper::is_csrf()) {
+            $data = [
+                'full_name' => $_POST['name'] ?? '',
+                'phone' => $_POST['phone'] ?? '',
+                'fakultas' => $_POST['fakultas'] ?? '',
+                'prodi' => $_POST['prodi'] ?? '',
+                'npm_nip' => $_POST['nomorKampus'] ?? '',
+                'email' => $_POST['email'] ?? '',
+                'posisi' => $_POST['posisi'] ?? '',
+                'gender' => $_POST['gender'] ?? '',
+                'password' => $_POST['password'] ?? '',
+                'confirmPassword' => $_POST['confirmPassword'] ?? ''
+            ];
+
+            $errors = $this->validateData($data);
+            if ($errors) {
+                return Helper::redirect('/dashboard/superadmin/profile', 'error', implode(', ', $errors), 0, [
+                    'fullName' => $data['full_name'],
+                    'email' => $data['email']
+                ]);
+            }
+
+            if (!empty($data['password'])) {
+                $data['password'] = Helper::hash_password($data['password']);
+            } else {
+                unset($data['password']);
+            }
+            unset($data['confirmPassword']);
+
         }
 
-        $uid = $_SESSION['user']['uid'];
-        $data = [
-            'full_name' => $_POST['name'] ?? '',
-            'phone' => $_POST['phone'] ?? '',
-            'fakultas' => $_POST['fakultas'] ?? '',
-            'prodi' => $_POST['prodi'] ?? '',
-            'npm_nip' => $_POST['nomorKampus'] ?? '',
-            'email' => $_POST['email'] ?? '',
-            'posisi' => $_POST['posisi'] ?? '',
-            'gender' => $_POST['gender'] ?? '',
-            'password' => $_POST['password'] ?? '',
-            'confirmPassword' => $_POST['confirmPassword'] ?? ''
-        ];
 
-        $errors = $this->validateData($data);
-        if ($errors) {
-            return Helper::redirect('/dashboard/superadmin/profile', 'error', implode(', ', $errors), 0, [
-                'fullName' => $data['full_name'],
-                'email' => $data['email']
-            ]);
-        }
 
-        if (!empty($data['password'])) {
-            $data['password'] = Helper::hash_password($data['password']);
-        } else {
-            unset($data['password']);
-        }
-        unset($data['confirmPassword']);
 
         try {
             $this->ProfileModel->UpdateData($uid, $data);
